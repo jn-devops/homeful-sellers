@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Notifications\Notifiable;
+use Homeful\Properties\Models\Project;
 use Homeful\Contacts\Models\Contact;
 use App\Traits\HasSellerAttributes;
 use Homeful\Common\Traits\HasMeta;
@@ -65,6 +66,13 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Contact::class, ContactUser::class)
             ->withPivot( 'meta', 'invited_at', 'validated_at')
+            ->withTimestamps();
+    }
+
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class, ProjectUser::class)
+            ->withPivot( 'meta')
             ->withTimestamps();
     }
 }
