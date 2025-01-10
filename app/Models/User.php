@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Homeful\Contacts\Models\Contact;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Notifications\Notifiable;
+use Homeful\Contacts\Models\Contact;
+use App\Traits\HasSellerAttributes;
 use Homeful\Common\Traits\HasMeta;
 
 /**
@@ -22,6 +23,7 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+    use HasSellerAttributes;
     use HasMeta;
 
     /**
@@ -33,7 +35,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'seller_commission_code'
+//        'seller_commission_code'
     ];
 
     /**
@@ -64,17 +66,5 @@ class User extends Authenticatable
         return $this->belongsToMany(Contact::class, ContactUser::class)
             ->withPivot( 'meta', 'invited_at', 'validated_at')
             ->withTimestamps();
-    }
-
-    public function setSellerCommissionCodeAttribute(string $value): self
-    {
-        $this->getAttribute('meta')->set('seller_commission_code', $value);
-
-        return $this;
-    }
-
-    public function getSellerCommissionCodeAttribute(): ?string
-    {
-        return $this->getAttribute('meta')->get('seller_commission_code');
     }
 }

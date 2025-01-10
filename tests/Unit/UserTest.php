@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Foundation\Testing\{RefreshDatabase, WithFaker};
 use Homeful\Contacts\Models\Contact;
 use App\Models\{ContactUser, User};

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Homeful\Contacts\Models\Contact;
+use App\Traits\HasSellerAttributes;
 use Homeful\Common\Traits\HasMeta;
 
 /**
@@ -18,12 +19,12 @@ use Homeful\Common\Traits\HasMeta;
  */
 class ContactUser extends Pivot
 {
+    use HasSellerAttributes;
     use HasMeta;
 
     protected $fillable = [
         'invited_at',
         'validated_at',
-        'seller_commission_code',
         'provisioning_uri'
     ];
 
@@ -35,18 +36,6 @@ class ContactUser extends Pivot
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function setSellerCommissionCodeAttribute(string $value): self
-    {
-        $this->getAttribute('meta')->set('seller_commission_code', $value);
-
-        return $this;
-    }
-
-    public function getSellerCommissionCodeAttribute(): ?string
-    {
-        return $this->getAttribute('meta')->get('seller_commission_code');
     }
 
     public function setProvisioningUriAttribute(string $value): self

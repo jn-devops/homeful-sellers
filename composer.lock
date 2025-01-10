@@ -2620,16 +2620,16 @@
         },
         {
             "name": "homeful/references",
-            "version": "v1.2.5",
+            "version": "v1.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jn-devops/references.git",
-                "reference": "f510c829457980e308120dc0d35284bb4ebb7a16"
+                "reference": "d013fee16cc47da51020cd49e2936526ac54ae13"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jn-devops/references/zipball/f510c829457980e308120dc0d35284bb4ebb7a16",
-                "reference": "f510c829457980e308120dc0d35284bb4ebb7a16",
+                "url": "https://api.github.com/repos/jn-devops/references/zipball/d013fee16cc47da51020cd49e2936526ac54ae13",
+                "reference": "d013fee16cc47da51020cd49e2936526ac54ae13",
                 "shasum": ""
             },
             "require": {
@@ -2695,7 +2695,7 @@
             ],
             "support": {
                 "issues": "https://github.com/jn-devops/references/issues",
-                "source": "https://github.com/jn-devops/references/tree/v1.2.5"
+                "source": "https://github.com/jn-devops/references/tree/v1.2.6"
             },
             "funding": [
                 {
@@ -2703,7 +2703,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-01-03T04:05:23+00:00"
+            "time": "2025-01-10T10:52:25+00:00"
         },
         {
             "name": "inertiajs/inertia-laravel",
@@ -2910,16 +2910,16 @@
         },
         {
             "name": "jn-devops/common",
-            "version": "v1.3.4",
+            "version": "v1.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jn-devops/common.git",
-                "reference": "a127e174a7c7eb471589a874cb62a8c9923fd331"
+                "reference": "7fda3a00fe1fd6cc0ddb13ab3fa13a7082917781"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jn-devops/common/zipball/a127e174a7c7eb471589a874cb62a8c9923fd331",
-                "reference": "a127e174a7c7eb471589a874cb62a8c9923fd331",
+                "url": "https://api.github.com/repos/jn-devops/common/zipball/7fda3a00fe1fd6cc0ddb13ab3fa13a7082917781",
+                "reference": "7fda3a00fe1fd6cc0ddb13ab3fa13a7082917781",
                 "shasum": ""
             },
             "require": {
@@ -2983,7 +2983,7 @@
             ],
             "support": {
                 "issues": "https://github.com/jn-devops/common/issues",
-                "source": "https://github.com/jn-devops/common/tree/v1.3.4"
+                "source": "https://github.com/jn-devops/common/tree/v1.3.5"
             },
             "funding": [
                 {
@@ -2991,7 +2991,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-01-05T14:21:10+00:00"
+            "time": "2025-01-09T02:18:18+00:00"
         },
         {
             "name": "jn-devops/contacts",
