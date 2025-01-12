@@ -36,7 +36,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-//        'seller_commission_code'
+        'seller_commission_code'
     ];
 
     /**

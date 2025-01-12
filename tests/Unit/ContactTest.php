@@ -8,10 +8,10 @@ uses(RefreshDatabase::class, WithFaker::class);
 
 test('sync contact works', function () {
     expect(Contact::all())->toHaveCount(0);
-    $contact1 = SyncContact::run('H-3VT2MY');
+    $contact1 = SyncContact::run('H-VLY8EV');
     expect($contact1)->toBeInstanceOf(Contact::class);
     expect(Contact::all())->toHaveCount(1);
-    $contact2 = SyncContact::run('H-3VT2MY');
+    $contact2 = SyncContact::run('H-VLY8EV');
     expect($contact2)->toBeInstanceOf(Contact::class);
     expect(Contact::all())->toHaveCount(1);
     expect($contact1->is($contact2))->toBeTrue();

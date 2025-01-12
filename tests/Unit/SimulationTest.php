@@ -3,7 +3,7 @@
 use Illuminate\Foundation\Testing\{RefreshDatabase, WithFaker};
 use Homeful\References\Facades\References;
 use Homeful\References\Models\Reference;
-use App\Actions\GetSellerReferenceCode;
+use App\Actions\GetSellerCommissionCode;
 use Homeful\Properties\Models\Project;
 use Homeful\References\Models\Input;
 use App\Actions\SyncContact;
@@ -15,8 +15,8 @@ uses(RefreshDatabase::class, WithFaker::class);
 test('use has cascading seller commission codes', function() {
     $user = User::factory()->create(['seller_commission_code' => $seller_commission_code1 = fake()->word()]);
     expect(Project::all())->toHaveCount(0);
-    expect(GetSellerReferenceCode::run($user))->toBe($seller_commission_code1);
-    expect(GetSellerReferenceCode::run($user, fake()->word))->toBe($seller_commission_code1);
+    expect(GetSellerCommissionCode::run($user))->toBe($seller_commission_code1);
+    expect(GetSellerCommissionCode::run($user, fake()->word))->toBe($seller_commission_code1);
     [$project1, $project2] = Project::factory(2)->create();
     $user->projects()->attach($project1,[
         'seller_commission_code' => $seller_commission_code2 = fake()->word(),
@@ -24,12 +24,12 @@ test('use has cascading seller commission codes', function() {
     $user->projects()->attach($project2,[
         'seller_commission_code' => $seller_commission_code3 = fake()->word(),
     ]);
-    expect(GetSellerReferenceCode::run($user, $project1->code))->toBe($seller_commission_code2);
-    expect(GetSellerReferenceCode::run($user, $project2->code))->toBe($seller_commission_code3);
+    expect(GetSellerCommissionCode::run($user, $project1->code))->toBe($seller_commission_code2);
+    expect(GetSellerCommissionCode::run($user, $project2->code))->toBe($seller_commission_code3);
 });
 
 test('reference an input and contact', function () {
-    $contact_reference_code = 'H-3VT2MY';
+    $contact_reference_code = 'H-VLY8EV';
     $user = User::factory()->create(['seller_commission_code' => $seller_commission_code1 = fake()->word()]);
     [$project1, $project2] = Project::factory(2)->create();
     $user->projects()->attach($project1,[

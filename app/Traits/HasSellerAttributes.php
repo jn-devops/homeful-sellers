@@ -10,6 +10,9 @@ trait HasSellerAttributes
         $this->mergeFillable([
             'seller_commission_code',
         ]);
+
+        $this->appends = array_merge($this->appends, ['seller_commission_code']);
+
     }
 
     public function setSellerCommissionCodeAttribute(string $value): self

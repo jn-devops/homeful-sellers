@@ -39,6 +39,13 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Dashboard
                                 </NavLink>
+
+                                <NavLink
+                                    :href="route('voucher.create')"
+                                    :active="route().current('voucher.create')"
+                                >
+                                    Voucher
+                                </NavLink>
                             </div>
                         </div>
 

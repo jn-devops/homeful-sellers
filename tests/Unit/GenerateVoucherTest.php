@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Foundation\Testing\{RefreshDatabase, WithFaker};
+use Homeful\References\Facades\References;
 use Homeful\References\Models\Reference;
-use Homeful\Contacts\Models\Contact;
 use App\Actions\GenerateVoucherCode;
 use App\Models\User;
 
@@ -21,7 +21,7 @@ dataset('user', function () {
 
 dataset('contact_reference_code', function () {
     return [
-        [fn() => 'H-3VT2MY']
+        [fn() => 'H-VLY8EV']
     ];
 });
 
@@ -32,5 +32,10 @@ test('generate voucher code works', function (User $user, string $contact_refere
     $reference = app(Reference::class)->whereCode($voucher_code)->first();
     expect($reference)->toBeInstanceOf(Reference::class);
     expect($reference->getInput()->seller_commission_code)->toBe(getSellerCode());
-    expect($contact = $reference->getContact()->is($action->getContact()))->toBeTrue();
+    $contact = $reference->getContact();
+    expect($action->getContact()->is($contact))->toBeTrue();
+    expect($contact->reference_code)->toBe($contact_reference_code);
+
+    $success = References::redeem($voucher_code, $user);
+    expect($success)->toBeTrue();
 })->with('user', 'contact_reference_code');

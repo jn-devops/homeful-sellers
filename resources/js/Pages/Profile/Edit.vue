@@ -1,8 +1,10 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import DeleteUserForm from './Partials/DeleteUserForm.vue';
-import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
+
+import UpdateSellerCommissionCodeForm from "@/Pages/Profile/Partials/UpdateSellerCommissionCodeForm.vue";
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
+import DeleteUserForm from './Partials/DeleteUserForm.vue';
 import { Head } from '@inertiajs/vue3';
 
 defineProps({
@@ -37,6 +39,12 @@ defineProps({
                         :status="status"
                         class="max-w-xl"
                     />
+                </div>
+
+                <div
+                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800"
+                >
+                    <UpdateSellerCommissionCodeForm class="max-w-xl" />
                 </div>
 
                 <div

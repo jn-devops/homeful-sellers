@@ -8,7 +8,7 @@ uses(RefreshDatabase::class, WithFaker::class);
 
 test('user has seller commission code attribute', function () {
     $user = User::factory()->create();
-    expect($user->seller_commission_code)->toBeNull();
+    expect($user->seller_commission_code)->toBeString();
     $user->seller_commission_code = $seller_commission_code = fake()->word();
     $user->save();
     expect($user->seller_commission_code)->toBe($seller_commission_code);

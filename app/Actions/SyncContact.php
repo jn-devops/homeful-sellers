@@ -17,7 +17,7 @@ class SyncContact
      * @var array|string[]
      */
     protected array $keys = [
-        'mobile'
+        'reference_code'
     ];
 
     /**
@@ -39,6 +39,11 @@ class SyncContact
         $keys = Arr::only($attributes, $this->keys);
         /** persist or update the contact in the contacts table */
         $contact = app(Contact::class)->updateOrCreate($keys, $attributes);
+
+        /** sync $contact->reference_code with the contact_reference_code from the Homeful Contacts */
+        $reference_code = Arr::get($validated, 'contact_reference_code');
+        $contact->reference_code = $reference_code;
+        $contact->save();
 
         return $contact instanceof Contact ? $contact : false;
     }
