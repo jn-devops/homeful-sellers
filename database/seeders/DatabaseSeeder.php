@@ -2,9 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Homeful\Properties\Models\Project;
 use Illuminate\Database\Seeder;
+use App\Models\User;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,9 +16,21 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $user = User::factory()
+//            ->hasAttached(Project::factory(50)->count(50), ['seller_commission_code' => fake()->domainWord()])
+            ->create([
+            'name' => 'John Doe',
+            'email' => 'johndoe@example.com',
+            'seller_commission_code' => 'AA-317'
         ]);
+
+//        $i = 0;
+        Project::factory(50)
+            ->create()
+            ->each(function ($project) use ($user) {
+                $user->projects()->attach($project, [
+                    'seller_commission_code' => fake()->domainWord()
+                ]);
+            });
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VoucherController;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -32,5 +33,6 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::resource('voucher', VoucherController::class)->only(['create', 'store']);
+Route::resource('projects', ProjectController::class);
 
 require __DIR__.'/auth.php';

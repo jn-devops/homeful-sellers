@@ -39,9 +39,10 @@ test('generate voucher code works', function (User $user, string $contact_refere
     expect($action->getReference()->is($reference))->toBeTrue();
     expect($action->getContact()->is($contact))->toBeTrue();
     expect($contact->reference_code)->toBeNull();
-
     $success = References::redeem($voucher_code, $user);
     expect($success)->toBeTrue();
+    $contact->refresh();
+    expect($contact->reference_code)->toBe(getSellerCode());
 })->with('user', 'contact_reference_code');
 
 test('redeem via action', function (User $user, string $contact_reference_code) {
