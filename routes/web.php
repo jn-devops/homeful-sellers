@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SyncProjectsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\ProjectController;
@@ -34,5 +35,6 @@ Route::middleware('auth')->group(function () {
 
 Route::resource('voucher', VoucherController::class)->only(['create', 'store']);
 Route::resource('projects', ProjectController::class);
+Route::resource('sync-projects', SyncProjectsController::class)->only(['create', 'store']);
 
 require __DIR__.'/auth.php';

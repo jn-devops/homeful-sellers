@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('project_id');
             $table->schemalessAttributes('meta');
             $table->timestamps();
+            $table->unique(['user_id', 'project_id']);
         });
     }
 

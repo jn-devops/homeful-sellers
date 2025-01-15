@@ -53,6 +53,13 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Projects
                                 </NavLink>
+
+                                <NavLink
+                                    :href="route('sync-projects.create')"
+                                    :active="route().current('ync-projects.create')"
+                                >
+                                    Sync Projects
+                                </NavLink>
                             </div>
                         </div>
 
