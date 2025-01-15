@@ -17,7 +17,7 @@ class SyncProjectsController extends Controller
     public function store(Request $request)
     {
         $validated = Validator::validate($request->all(), ['filters' => ['nullable', 'string']]);
-        $projects = SyncProjects::run($request->user());
+        SyncProjects::run($request->user(), $validated);
 
         return redirect()->route('projects.index');
     }

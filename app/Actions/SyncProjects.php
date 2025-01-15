@@ -14,7 +14,7 @@ class SyncProjects
 {
     use AsAction;
 
-    public function handle(User $user)
+    public function handle(User $user, ?array $attribs = []): void
     {
         $route = config('homeful-sellers.end-points.projects');
         $response = Http::acceptJson()->get($route);
@@ -28,15 +28,6 @@ class SyncProjects
                     'seller_commission_code' => $user->seller_commission_code,
                 ]);
             }
-
-//            $alreadyExists = $user->projects()->where('project_id', $project->id)->exists();
-//            if (!$alreadyExists) {
-//                $user->projects()->attach($project, [
-//                    'seller_commission_code' => $user->seller_commission_code,
-//                ]);
-//            };
         }
-
-        return Project::all();
     }
 }

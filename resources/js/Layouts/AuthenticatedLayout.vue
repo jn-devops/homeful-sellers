@@ -53,13 +53,6 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Projects
                                 </NavLink>
-
-                                <NavLink
-                                    :href="route('sync-projects.create')"
-                                    :active="route().current('ync-projects.create')"
-                                >
-                                    Sync Projects
-                                </NavLink>
                             </div>
                         </div>
 
@@ -96,6 +89,11 @@ const showingNavigationDropdown = ref(false);
                                             :href="route('profile.edit')"
                                         >
                                             Profile
+                                        </DropdownLink>
+                                        <DropdownLink
+                                            :href="route('sync-projects.create')"
+                                        >
+                                            Sync Projects
                                         </DropdownLink>
                                         <DropdownLink
                                             :href="route('logout')"
@@ -187,6 +185,9 @@ const showingNavigationDropdown = ref(false);
                         <div class="mt-3 space-y-1">
                             <ResponsiveNavLink :href="route('profile.edit')">
                                 Profile
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('sync-projects.create')">
+                                Sync Projects
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 :href="route('logout')"
