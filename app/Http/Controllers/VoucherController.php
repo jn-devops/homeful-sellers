@@ -10,12 +10,15 @@ use Homeful\Contacts\Classes\ContactMetaData;
 use Homeful\Contacts\Data\ContactData;
 //use Homeful\Contacts\Facades\Contacts;
 use Homeful\Contacts\Contacts;
+use Homeful\Properties\Models\Project;
 
 class VoucherController extends Controller
 {
     public function create()
     {
-        return Inertia::render('Voucher/Create');
+        $projects = Project::all();
+
+        return Inertia::render('Voucher/Create', ['projects' => $projects]);
     }
 
     public function store(GenerateVoucherRequest $request)

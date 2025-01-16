@@ -3,6 +3,10 @@ import GenerateVoucherForm from './Partials/GenerateVoucherForm.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 
+const props = defineProps({
+    projects: Object
+});
+
 </script>
 
 <template>

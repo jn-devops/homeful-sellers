@@ -1,6 +1,7 @@
 <script setup>
 
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import SelectInput from "@/Components/SelectComboboxes.vue";
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -19,6 +20,10 @@ defineProps({
 });
 
 const user = usePage().props.auth.user;
+const projects = usePage().props.projects.map(item => ({
+   id: item.code,
+   name: item.name
+}));
 
 const form = useForm({
     contact_reference_code: '',
@@ -89,12 +94,10 @@ watch (
             </div>
 
             <div>
-                <InputLabel for="project_code" value="Project Code" />
-
-                <TextInput
+                <SelectInput
                     id="project_code"
-                    type="text"
-                    class="mt-1 block w-full"
+                    label="Projects"
+                    :options="projects"
                     v-model="form.project_code"
                 />
 
