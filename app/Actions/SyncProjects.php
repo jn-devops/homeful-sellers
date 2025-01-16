@@ -2,11 +2,10 @@
 
 namespace App\Actions;
 
-use Homeful\Properties\Data\ProjectData;
 use Lorisleiva\Actions\Concerns\AsAction;
 use Homeful\Properties\Models\Project;
-use Spatie\LaravelData\DataCollection;
 use Illuminate\Support\Facades\Http;
+use App\Events\ProjectsSynced;
 use Illuminate\Support\Arr;
 use App\Models\User;
 
@@ -29,5 +28,11 @@ class SyncProjects
                 ]);
             }
         }
+        ProjectsSynced::dispatch($user);
+    }
+
+    public function asJob(User $user, ?array $attribs = []): void
+    {
+        $this->handle($user, $attribs);
     }
 }
