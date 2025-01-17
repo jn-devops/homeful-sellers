@@ -29,7 +29,7 @@ test('use has cascading seller commission codes', function() {
 });
 
 test('reference an input and contact', function () {
-    $contact_reference_code = 'H-C2ZMVU';
+    $contact_reference_code = env('TEST_CONTACT_REFERENCE_CODE', 'H-CB6YWH');
     $user = User::factory()->create(['seller_commission_code' => $seller_commission_code1 = fake()->word()]);
     [$project1, $project2] = Project::factory(2)->create();
     $user->projects()->attach($project1,[

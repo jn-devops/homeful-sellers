@@ -23,14 +23,15 @@ dataset('user', function () {
 
 dataset('contact_reference_code', function () {
     return [
-        [fn() => 'H-C2ZMVU']
+        [fn() => env('TEST_CONTACT_REFERENCE_CODE', 'H-CB6YWH')]
     ];
 });
 
 test('generate voucher code works', function (User $user, string $contact_reference_code) {
     expect($user->seller_commission_code)->toBe(getSellerCode());
     $action = app(GenerateVoucherCode::class);
-    $voucher_code = $action->run($user, $contact_reference_code);
+    $project_code = null;
+    $voucher_code = $action->run($user, $contact_reference_code, $project_code);
     $reference = app(Reference::class)->whereCode($voucher_code)->first();
     expect($reference)->toBeInstanceOf(Reference::class);
     expect($reference->owner->is($user))->toBeTrue();

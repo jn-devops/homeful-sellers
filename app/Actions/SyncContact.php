@@ -25,27 +25,15 @@ class SyncContact
      * @return Contact|false
      * @throws \Illuminate\Http\Client\ConnectionException
      */
-    protected function sync(array $validated): Contact|false
+    protected function sync(array $validated): false|Contact
     {
-        //TODO: try catch here
-
         /** get the json response of the specific contact in Homeful Contacts */
         $response = Http::acceptJson()->get($this->getRoute($validated));
-        /** cast the specific contact node of the json response to ContactMetaData
-         *  then transform to array for further consumption of a Contact model.
-         */
-        $attributes = ContactMetaData::from($response->json('contact'))->toArray();
-        /** retrieve key values to used for searching unique values in the contacts table */
-        $keys = Arr::only($attributes, $this->keys);
-        /** persist or update the contact in the contacts table */
-        $contact = app(Contact::class)->updateOrCreate($keys, $attributes);
 
-//        /** sync $contact->reference_code with the contact_reference_code from the Homeful Contacts */
-//        $reference_code = Arr::get($validated, 'contact_reference_code');
-//        $contact->reference_code = $reference_code;
-//        $contact->save();
-
-        return $contact instanceof Contact ? $contact : false;
+        return $response->ok()
+            ? $this->persistContact($response)
+            : false
+            ;
     }
 
     /**
@@ -53,7 +41,7 @@ class SyncContact
      * @return Contact|false
      * @throws \Illuminate\Http\Client\ConnectionException
      */
-    public function handle(string|array $contact_reference_code): Contact|false
+    public function handle(string|array $contact_reference_code): false|Contact
     {
         $attribs = is_array($contact_reference_code) ? $contact_reference_code : compact('contact_reference_code');
         $validated = Validator::validate($attribs, $this->rules());
@@ -75,5 +63,25 @@ class SyncContact
         return [
             'contact_reference_code' => ['required', 'string', 'min:4']
         ];
+    }
+
+    /**
+     * @param \GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response $response
+     * @return false|Contact
+     */
+    public function persistContact(\GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response $response): false|Contact
+    {
+        /** cast the specific contact node of the json response to ContactMetaData
+         *  then transform to array for further consumption of a Contact model.
+         */
+        $attributes = ContactMetaData::from($response->json('contact'))->toArray();
+
+        /** retrieve key values to used for searching unique values in the contacts table */
+        $keys = Arr::only($attributes, $this->keys);
+
+        /** persist or update the contact in the contacts table */
+        $contact = app(Contact::class)->updateOrCreate($keys, $attributes);
+
+        return $contact instanceof Contact ? $contact : false;
     }
 }
