@@ -40,6 +40,7 @@ class VoucherController extends Controller
     {
         $contact = $action->getContact();
 
-        return app(Contacts::class)->fromContactModelToContactMetadata($contact);
+        return $contact->getData();
+//        return app(Contacts::class)->fromContactModelToContactMetadata($contact);
     }
 }

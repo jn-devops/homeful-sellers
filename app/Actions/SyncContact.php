@@ -5,7 +5,7 @@ namespace App\Actions;
 use Homeful\Contacts\Classes\ContactMetaData;
 use Lorisleiva\Actions\Concerns\AsAction;
 use Illuminate\Support\Facades\Validator;
-use Homeful\Contacts\Models\Contact;
+use Homeful\Contacts\Models\Customer as Contact;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Arr;
 

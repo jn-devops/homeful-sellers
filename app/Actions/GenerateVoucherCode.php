@@ -7,7 +7,7 @@ use Lorisleiva\Actions\Concerns\AsAction;
 use Homeful\References\Models\Reference;
 use Homeful\Properties\Models\Project;
 use Homeful\References\Models\Input;
-use Homeful\Contacts\Models\Contact;
+use Homeful\Contacts\Models\Customer as Contact;
 use App\Models\User;
 
 class GenerateVoucherCode
