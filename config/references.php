@@ -6,7 +6,7 @@ return [
         'input' => \Homeful\References\Models\Input::class,
         'lead' => \Homeful\KwYCCheck\Models\Lead::class,
         'contract' => \Homeful\Contracts\Models\Contract::class,
-        'contact' => \Homeful\Contacts\Models\Contact::class,
+        'contact' => \Homeful\Contacts\Models\Customer::class,
     ],
     'data' => [
         'lead' => \Homeful\KwYCCheck\Data\LeadData::class,
