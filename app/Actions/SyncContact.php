@@ -2,10 +2,10 @@
 
 namespace App\Actions;
 
+use Homeful\Contacts\Models\Customer as Contact;
 use Homeful\Contacts\Classes\ContactMetaData;
 use Lorisleiva\Actions\Concerns\AsAction;
 use Illuminate\Support\Facades\Validator;
-use Homeful\Contacts\Models\Customer as Contact;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Arr;
 
@@ -80,7 +80,7 @@ class SyncContact
         $keys = Arr::only($attributes, $this->keys);
 
         /** persist or update the contact in the contacts table */
-        $contact = app(Contact::class)->updateOrCreate($keys, $attributes);
+        $contact = app(Contact::class)->firstOrCreate($keys, $attributes);
 
         return $contact instanceof Contact ? $contact : false;
     }
