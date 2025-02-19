@@ -91,7 +91,7 @@ watch (
             </div>
 
             <div class="flex flex-col items-center">
-                <PlainBlackButton :disabled="form.processing">Generate</PlainBlackButton>
+                <PlainBlackButton type="submit" :disabled="form.processing">Generate</PlainBlackButton>
 
                 <Transition
                     enter-active-class="transition ease-in-out"
