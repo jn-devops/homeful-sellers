@@ -139,7 +139,6 @@ watch (
                         class="mt-6 text-6xl font-extrabold text-center text-gray-900 dark:text-gray-100"
                     >
                         {{ voucher.code }}
-                        KJUB928
                     </h1>
 
                     <div class="mt-6 flex justify-end">
