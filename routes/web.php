@@ -9,14 +9,10 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return redirect()->route('voucher.create');
 });
 
+// Depricated
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -33,7 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile', [ProfileController::class, 'store'])->name('profile.store');
 });
 
-Route::resource('voucher', VoucherController::class)->only(['create', 'store']);
+Route::resource('voucher', VoucherController::class)->middleware(['auth', 'verified'])->only(['create', 'store']);
 Route::resource('projects', ProjectController::class);
 Route::resource('sync-projects', SyncProjectsController::class)->only(['create', 'store']);
 

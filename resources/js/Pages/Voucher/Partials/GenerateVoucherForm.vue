@@ -2,13 +2,17 @@
 
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import SelectInput from "@/Components/SelectComboboxes.vue";
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import Modal from "@/Components/Modal.vue";
 import { ref, watch } from "vue";
+import GradientStyleInput from '@/Components/Inputs/GradientStyleInput.vue';
+import GradientSelectCombobox from '@/Components/Inputs/GradientSelectCombobox.vue';
+import PlainBlackButton from '@/Components/Buttons/PlainBlackButton.vue';
+import DefaultModal from '@/Components/DefaultModal.vue';
+import SecondaryPlainBlack from '@/Components/Buttons/SecondaryPlainBlack.vue';
 
 defineProps({
     mustVerifyEmail: {
@@ -62,56 +66,32 @@ watch (
 
 <template>
     <section>
-        <header>
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                Inputs
-            </h2>
-
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Generate voucher code for the buyer to input upon checkout in Homeful Shop.
-            </p>
-        </header>
 
         <form
             @submit.prevent="form.post(route('voucher.store'))"
-            class="mt-6 space-y-6"
+            class="space-y-6"
         >
             <div>
-                <InputLabel for="contact_reference_code" value="Homeful Id" />
-
-                <TextInput
-                    id="contact_reference_code"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.contact_reference_code"
+                <GradientStyleInput 
+                    label="Homeful ID"
                     required
-                    autofocus
-                    autocomplete="contact_reference_code"
+                    v-model="form.contact_reference_code"
+                    placeholder="Enter Homeful ID"
+                    :error="form.errors.contact_reference_code"
                 />
-
-                <div class="text-xs text-gray-600 dark:text-gray-400">{{ voucher?.contact?.name }} [ {{ voucher?.contact?.email }}, {{ voucher?.contact?.mobile }} ] </div>
-                <InputError class="mt-2" :message="form.errors.contact_reference_code" />
             </div>
 
             <div>
-                <SelectInput
-                    id="project_code"
+                <GradientSelectCombobox 
                     label="Projects"
                     :options="projects"
                     v-model="form.project_code"
+                    :error-message="form.errors.project_code"
                 />
-
-                <InputError class="mt-2" :message="form.errors.project_code" />
             </div>
 
-            <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Generate</PrimaryButton>
-
-                <div v-if="voucher.code && voucher.code !== ''">
-                    <SecondaryButton @click="showVoucherCode">
-                        Show
-                    </SecondaryButton>
-                </div>
+            <div class="flex flex-col items-center">
+                <PlainBlackButton :disabled="form.processing">Generate</PlainBlackButton>
 
                 <Transition
                     enter-active-class="transition ease-in-out"
@@ -123,35 +103,52 @@ watch (
                         v-if="form.recentlySuccessful"
                         class="text-sm text-gray-600 dark:text-gray-400"
                     >
-                        Generated.
+                        Generated
                     </p>
                 </Transition>
+
+                <div v-if="voucher.code && voucher.code !== ''" class="mt-2 w-full">
+                    <SecondaryPlainBlack class="w-full" @click="showVoucherCode">
+                        <div class="text-sm w-full">
+                            Show Generated Code
+                        </div>
+                    </SecondaryPlainBlack>
+                </div>
+
             </div>
         </form>
-        <Modal :show="showingVoucherCode" @close="closeModal">
-            <div class="p-6">
-                <h2
-                    class="text-lg font-medium text-gray-900 dark:text-gray-100"
-                >
-                    Generated Voucher Code
-                </h2>
+        <Transition
+            enter-active-class="transition ease-in-out"
+            enter-from-class="opacity-0"
+            leave-active-class="transition ease-in-out"
+            leave-to-class="opacity-0"
+        >
+            <DefaultModal v-if="showingVoucherCode" @close="closeModal">
+                <div class="p-6">
+                    <h2
+                        class="text-lg font-medium text-gray-900 dark:text-gray-100"
+                    >
+                        Generated Voucher Code
+                    </h2>
 
-                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                    Copy the code below and send to {{ voucher.contact?.name }} upon checking out in Homeful Shop.
-                </p>
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                        Copy the code below and send to {{ voucher.contact?.name }} upon checking out in Homeful Shop.
+                    </p>
 
-                <h1
-                    class="mt-6 text-6xl font-extrabold text-center text-gray-900 dark:text-gray-100"
-                >
-                    {{ voucher.code }}
-                </h1>
+                    <h1
+                        class="mt-6 text-6xl font-extrabold text-center text-gray-900 dark:text-gray-100"
+                    >
+                        {{ voucher.code }}
+                        KJUB928
+                    </h1>
 
-                <div class="mt-6 flex justify-end">
-                    <SecondaryButton @click="closeModal">
-                        Close
-                    </SecondaryButton>
+                    <div class="mt-6 flex justify-end">
+                        <SecondaryButton @click="closeModal">
+                            Close
+                        </SecondaryButton>
+                    </div>
                 </div>
-            </div>
-        </Modal>
+            </DefaultModal>
+        </Transition>
     </section>
 </template>

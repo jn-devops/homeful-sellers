@@ -1,11 +1,13 @@
 <script setup>
 import GenerateVoucherForm from './Partials/GenerateVoucherForm.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
 
 const props = defineProps({
-    projects: Object
+    projects: Object,
 });
+
+console.log(usePage().props.auth)
 
 </script>
 
@@ -14,24 +16,21 @@ const props = defineProps({
 
     <AuthenticatedLayout>
         <template #header>
-            <h2
-                class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
-            >
-                Voucher
-            </h2>
+            <div class="flex flex-col items-center mt-7 px-2">
+                <div class="w-full sm:w-full md:w-[500px]">
+                    <h2 class="text-xl font-bold">{{usePage().props.auth.user.name}}</h2>
+                    <h5 class="text-sm font-semibold">Seller Code: <span class="text-[#C38400]">{{ usePage().props.auth.user.seller_commission_code }}</span></h5>
+                </div>
+            </div>
         </template>
 
-        <div class="py-12">
-            <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                <div
-                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800"
-                >
-                    <GenerateVoucherForm
-                        :must-verify-email="mustVerifyEmail"
-                        :status="status"
-                        class="max-w-xl"
-                    />
-                </div>
+        <div class="flex flex-col items-center justify-center mt-7 px-2">
+            <div class="w-full sm:w-full md:w-[500px] border-2 shadow-lg p-7">
+                <GenerateVoucherForm
+                    :must-verify-email="mustVerifyEmail"
+                    :status="status"
+                    class="w-full"
+                />
             </div>
         </div>
     </AuthenticatedLayout>

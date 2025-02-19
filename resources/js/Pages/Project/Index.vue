@@ -15,13 +15,15 @@ const props = defineProps({
     <AuthenticatedLayout>
         <!-- Header for the page -->
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                Projects
-            </h2>
+            <div class="p-7">
+                <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+                    Projects
+                </h2>
+            </div>
         </template>
 
         <!-- Main Content -->
-        <div class="py-12">
+        <div class="pb-12">
             <!-- Center the main content and apply spacing for different breakpoints -->
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <!-- Table Container -->

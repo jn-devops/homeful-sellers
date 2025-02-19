@@ -1,10 +1,11 @@
 <script setup>
 import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import PlainBlackButton from '@/Components/Buttons/PlainBlackButton.vue';
+import TextInput from '@/Components/Inputs/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import PasswordInput from '@/Components/Inputs/PasswordInput.vue';
+import { computed, ref } from 'vue';
+import SecondaryPlainBlack from '@/Components/Buttons/SecondaryPlainBlack.vue';
 
 const form = useForm({
     name: '',
@@ -19,110 +20,105 @@ const submit = () => {
         onFinish: () => form.reset('password', 'password_confirmation'),
     });
 };
+
+const disclaimerChecked = ref(false);
+
+const showPassword = computed(() => props.autoPassword === '');
 </script>
 
 <template>
     <GuestLayout>
         <Head title="Register" />
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="name" value="Name" />
-
-                <TextInput
-                    id="name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.name"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
-
-                <InputError class="mt-2" :message="form.errors.name" />
+        <div class="flex flex-col mt-10 px-8">
+            <div class="flex flex-row items-start w-full">
+                <div class="basis-1/3 ">
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
+                    </svg>
+                </div>
+                <div class="basis-1/3 text-center font-bold">
+                    Sign Up
+                </div>
+                <div class="basis-1/3">
+                </div>
             </div>
-
-            <div class="mt-4">
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
+            <div class="w-full mt-10">
+                <p class="text-xl font-extrabold">
+                    Create an Account to <br> Get Started
+                </p>
             </div>
-
-            <div class="mt-4">
-                <InputLabel for="seller_commission_code" value="Default Seller Commission Code" />
-
-                <TextInput
-                    id="seller_commission_code"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.seller_commission_code"
-                    required
-                />
-
-                <InputError class="mt-2" :message="form.errors.seller_commission_code" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel
-                    for="password_confirmation"
-                    value="Confirm Password"
-                />
-
-                <TextInput
-                    id="password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password_confirmation"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError
-                    class="mt-2"
-                    :message="form.errors.password_confirmation"
-                />
-            </div>
-
-            <div class="mt-4 flex items-center justify-end">
-                <Link
-                    :href="route('login')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
-                >
-                    Already registered?
-                </Link>
-
-                <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Register
-                </PrimaryButton>
-            </div>
-        </form>
+            <form @submit.prevent="submit">
+                <div class="w-full mt-5">
+                    <TextInput
+                        placeholder="Full Name"
+                        label="Full Name"
+                        required
+                        no-border-radius
+                        v-model="form.name"
+                        :error-message="form.errors.name"
+                    />
+                </div>
+                <div class="w-full mt-5">
+                    <TextInput
+                        placeholder="Email"
+                        label="Email"
+                        required
+                        no-border-radius
+                        v-model="form.email"
+                        :error-message="form.errors.email"
+                    />
+                </div>
+                <div class="w-full mt-5">
+                    <TextInput
+                        placeholder="Seller Commission Code"
+                        label="Seller Code"
+                        required
+                        no-border-radius
+                        v-model="form.seller_commission_code"
+                        :error-message="form.errors.seller_commission_code"
+                    />
+                </div>
+                <div class="w-full mt-5">
+                    <PasswordInput
+                        placeholder="Password"
+                        label="Password"
+                        required
+                        no-border-radius
+                        v-model="form.password"
+                        :error-message="form.errors.password"
+                    />
+                </div>
+                <div class="w-full mt-5">
+                    <PasswordInput
+                        placeholder="Password"
+                        label="Confirm Password"
+                        required
+                        no-border-radius
+                        v-model="form.password_confirmation"
+                        :error-message="form.errors.password_confirmation"
+                    />
+                </div>
+                <div class="mt-7 px-2">
+                    <div class="flex items-center mb-4 gap-2">
+                        <input type="checkbox" v-model="disclaimerChecked" id="default-checkbox" class="w-4 h-4 text-[#F7C947] rounded-sm focus:ring-[#E94572]">
+                        <label for="default-checkbox" class="ms-2 text-xs font-medium text-gray-900 dark:text-gray-300">
+                            I've read and agree with the <b class="underline cursor-pointer">Terms and Conditions</b> and the <b class="underline cursor-pointer">Privacy Policy</b>.
+                        </label>
+                    </div>
+                </div>
+                <div class="mt-9">
+                    <PlainBlackButton type="submit" :disabled="!disclaimerChecked">
+                        Register
+                    </PlainBlackButton>
+                </div>
+                <div class="mt-3 mb-10">
+                    <Link :href="route('login')" >
+                        <SecondaryPlainBlack>
+                            Login
+                        </SecondaryPlainBlack>
+                    </Link>
+                </div>
+            </form>
+        </div>
     </GuestLayout>
 </template>
