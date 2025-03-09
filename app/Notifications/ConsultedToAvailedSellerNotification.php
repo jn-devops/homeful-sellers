@@ -2,21 +2,21 @@
 
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
+use Homeful\References\Models\Reference;
+use Illuminate\Bus\Queueable;
 
-class ConsultedToAvailedSellerNotification extends Notification
+class ConsultedToAvailedSellerNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct()
+    protected Reference $reference;
+
+    public function __construct(Reference $reference)
     {
-        //
+        $this->reference = $reference;
     }
 
     /**

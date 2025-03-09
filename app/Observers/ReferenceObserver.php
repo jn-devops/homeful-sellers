@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Notifications\{ConsultedToAvailedSellerNotification, OnboardedToPaidSellerNotification};
 use Homeful\References\Models\Reference;
 use App\Actions\GetSellerCommissionCode;
 use Illuminate\Support\Arr;
@@ -31,5 +32,8 @@ class ReferenceObserver
         /** This is main reason for this listener, to attach the seller commission code to the contact */
         $contact->reference_code = GetSellerCommissionCode::run($user, $project_code);
         $contact->save();
+
+        $user->notify(new ConsultedToAvailedSellerNotification($reference));
+        $user->notify(new OnboardedToPaidSellerNotification($reference));
     }
 }
