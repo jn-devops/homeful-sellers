@@ -17,12 +17,12 @@ class ConsultedToAvailedSellerNotification extends Notification implements Shoul
 {
     use Queueable;
 
-    protected Reference $reference;
+    protected string $reference_code;
     protected string $project_code;
 
-    public function __construct(Reference $reference, string $project_code)
+    public function __construct($reference_code, string $project_code)
     {
-        $this->reference = $reference;
+        $this->reference_code = $reference_code;
         $this->project_code = $project_code;
     }
 
@@ -73,7 +73,8 @@ class ConsultedToAvailedSellerNotification extends Notification implements Shoul
 
     protected function getContact(): ?ContactMetaData
     {
-        $contact = $this->reference->getContact();
+        $reference = Reference::where('code', $this->reference_code)->first();
+        $contact = $reference->getContact();
 
         return $contact instanceof Contact
             ? $contact->getData()

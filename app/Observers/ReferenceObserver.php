@@ -27,7 +27,7 @@ class ReferenceObserver
         /** the seller commission code. */
         $a = Arr::get($reference->metadata, 'project.code');
         $b = Arr::get($reference->redeemer->metadata, 'project_code');
-        $project_code = ($a == $b) ? $b : null;
+        $project_code = is_null($b) ? $a : (($a == $b) ? $b : null);
 
         /** This is main reason for this listener, to attach the seller commission code to the contact */
         $contact->reference_code = GetSellerCommissionCode::run($user, $project_code);

@@ -3,6 +3,8 @@
 namespace App\Notifications;
 
 use Illuminate\Notifications\Messages\MailMessage;
+use Homeful\Contacts\Models\Customer as Contact;
+use Homeful\Contacts\Classes\ContactMetaData;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use Homeful\References\Models\Reference;
@@ -13,11 +15,12 @@ class OnboardedToPaidSellerNotification extends Notification implements ShouldQu
     use Queueable;
     protected Reference $reference;
 
-    public function __construct(Reference $reference)
-    {
-        $this->reference = $reference;
-    }
+    protected string $reference_code;
 
+    public function __construct($reference_code)
+    {
+        $this->reference_code = $reference_code;
+    }
     /**
      * Get the notification's delivery channels.
      *
@@ -49,5 +52,15 @@ class OnboardedToPaidSellerNotification extends Notification implements ShouldQu
         return [
             //
         ];
+    }
+
+    protected function getContact(): ?ContactMetaData
+    {
+        $reference = Reference::where('code', $this->reference_code)->first();
+        $contact = $reference->getContact();
+
+        return $contact instanceof Contact
+            ? $contact->getData()
+            : null;
     }
 }
