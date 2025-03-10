@@ -54,7 +54,7 @@ class ConsultedToAvailedSellerNotification extends Notification
 
         return (new MailMessage)
             ->line('Hi ' . $notifiable->name)
-            ->line($name . 'has booked a unit at ' . $project_name);
+            ->line($name . ' has booked a unit at ' . $project_name);
     }
 
     /**
