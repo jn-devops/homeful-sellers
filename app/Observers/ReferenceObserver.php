@@ -33,7 +33,7 @@ class ReferenceObserver
         $contact->reference_code = GetSellerCommissionCode::run($user, $project_code);
         $contact->save();
 
-        $user->notify(new ConsultedToAvailedSellerNotification($reference));
+        $user->notify(new ConsultedToAvailedSellerNotification($reference, $project_code));
         $user->notify(new OnboardedToPaidSellerNotification($reference));
     }
 }
