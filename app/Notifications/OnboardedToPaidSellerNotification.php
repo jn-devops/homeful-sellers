@@ -36,9 +36,15 @@ class OnboardedToPaidSellerNotification extends Notification implements ShouldQu
      */
     public function toMail(object $notifiable): MailMessage
     {
+        $name = '';
+        $contact = $this->getContact();
+        if ($contact instanceof ContactMetaData) {
+            $name = $contact->name;
+        }
+
         return (new MailMessage)
             ->line('Hi ' . $notifiable->name)
-            ->line($name . 'has paid the consultation fee ');
+            ->line($name . 'has paid the consultation fee.');
     }
 
     /**
