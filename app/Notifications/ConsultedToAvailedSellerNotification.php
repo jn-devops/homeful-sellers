@@ -48,14 +48,16 @@ class ConsultedToAvailedSellerNotification extends Notification
 
         $project_name = '';
         $project = $this->getProject();
-        if ($project instanceof ProjectData) {
+        if ($project instanceof Project) {
             $project_name = $project->name;
         }
 
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->line('Hi ' . $name)
+            ->line('Reference code: ' . $this->reference_code)
+            ->action('Notification Action', url('/'))
+            ->line('Project ' . $project_name)
+            ->line('Thank you for using our project! ' . $this->project_code);
     }
 
     /**
@@ -80,10 +82,8 @@ class ConsultedToAvailedSellerNotification extends Notification
             : null;
     }
 
-    protected function getProject(): ?ProjectData
+    protected function getProject(): ?Project
     {
-        $project = Project::where('code', $this->project_code)->first();
-
-        return $project instanceof Project ? ProjectData::fromModel($project) : null;
+        return Project::where('code', $this->project_code)->first();
     }
 }
