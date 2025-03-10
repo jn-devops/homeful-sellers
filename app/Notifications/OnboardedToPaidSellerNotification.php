@@ -37,9 +37,8 @@ class OnboardedToPaidSellerNotification extends Notification implements ShouldQu
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->line('Hi ' . $notifiable->name)
+            ->line($name . 'has paid the consultation fee ');
     }
 
     /**

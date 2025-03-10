@@ -53,11 +53,8 @@ class ConsultedToAvailedSellerNotification extends Notification
         }
 
         return (new MailMessage)
-            ->line('Hi ' . $name)
-            ->line('Reference code: ' . $this->reference_code)
-            ->action('Notification Action', url('/'))
-            ->line('Project ' . $project_name)
-            ->line('Thank you for using our project! ' . $this->project_code);
+            ->line('Hi ' . $notifiable->name)
+            ->line($name . 'has booked a unit at ' . $project_name);
     }
 
     /**
