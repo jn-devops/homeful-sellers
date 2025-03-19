@@ -37,10 +37,14 @@ class OnboardedToPaidSellerNotification extends Notification implements ShouldQu
     public function toMail(object $notifiable): MailMessage
     {
         $name = '';
-        $contact = $this->getContact();
-        if ($contact instanceof ContactMetaData) {
-            $name = $contact->name;
-        }
+        $reference = Reference::where('code', $this->reference_code)->first();
+        $contact =$reference->getEntities(\Homeful\Contacts\Models\Customer::class)->first();
+        $name = implode(' ', array_filter([
+            $contact->first_name ?? '',
+            mb_substr($contact->middle_name ?? '', 0, 1) ? mb_substr($contact->middle_name, 0, 1) . '.' : '',
+            $contact->last_name ?? '',
+        ]));
+
 
         return (new MailMessage)
             ->line('Hi ' . $notifiable->name)
