@@ -46,7 +46,7 @@ class SyncContact
         $attribs = is_array($contact_reference_code) ? $contact_reference_code : compact('contact_reference_code');
         $validated = Validator::validate($attribs, $this->rules());
 
-        return $this->sync($validated);
+        return $this->newPersistContact($contact_reference_code);
     }
 
     /**
@@ -63,6 +63,21 @@ class SyncContact
         return [
             'contact_reference_code' => ['required', 'string', 'min:4']
         ];
+    }
+
+    public function newPersistContact(string $homeful_id): false|Contact{
+        $request =Http::withToken(config('homeful-sellers.keys.contact_key'))->get(config('homeful-sellers.end-points.contact').'api/get-contact-by-homeful-id', [
+            'code' => $homeful_id,
+        ]);
+
+        if($request->ok()) {
+            $attributes = ContactMetaData::from($request->json('data'))->toArray();
+            $keys = Arr::only($attributes, $this->keys);
+        }
+
+        $contact = app(Contact::class)->firstOrCreate($keys, $attributes);
+
+        return $contact instanceof Contact ? $contact : false;
     }
 
     /**
