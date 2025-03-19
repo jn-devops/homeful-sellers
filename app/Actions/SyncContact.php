@@ -8,6 +8,7 @@ use Lorisleiva\Actions\Concerns\AsAction;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Arr;
+use Homeful\Contacts\Actions\PersistContactAction;
 
 class SyncContact
 {
@@ -66,16 +67,23 @@ class SyncContact
     }
 
     public function newPersistContact(string $homeful_id): false|Contact{
-        $request =Http::withToken(config('homeful-sellers.keys.contact_key'))->get(config('homeful-sellers.end-points.contact').'api/get-contact-by-homeful-id', [
+        $request =Http::withToken(config('homeful-sellers.keys.contact_key'))->post(config('homeful-sellers.end-points.contact').'api/get-contact-by-homeful-id', [
             'code' => $homeful_id,
         ]);
 
+
         if($request->ok()) {
-            $attributes = ContactMetaData::from($request->json('data'))->toArray();
+            $attributes = $request->json('data');
             $keys = Arr::only($attributes, $this->keys);
         }
 
-        $contact = app(Contact::class)->firstOrCreate($keys, $attributes);
+        $contact = app(Contact::class)->where('reference_code',$homeful_id)->first();
+        if($contact==null){
+            $action = app(PersistContactAction::class);
+            $validator = Validator::make($attributes, $action->rules());
+            $validated = $validator->validated();
+            $contact = $action->run($validated);
+        }
 
         return $contact instanceof Contact ? $contact : false;
     }

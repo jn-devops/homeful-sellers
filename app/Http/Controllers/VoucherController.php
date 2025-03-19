@@ -11,6 +11,7 @@ use Homeful\Contacts\Data\ContactData;
 //use Homeful\Contacts\Facades\Contacts;
 use Homeful\Contacts\Contacts;
 use Homeful\Properties\Models\Project;
+use Illuminate\Support\Facades\Http;
 
 class VoucherController extends Controller
 {
@@ -26,12 +27,15 @@ class VoucherController extends Controller
         $args = array_merge(['user' => $request->user()], $request->validated());
         $action = app(GenerateVoucherCode::class);
         $voucher_code = $action->run(...$args);
+        $request =Http::withToken(config('homeful-sellers.keys.contact_key'))->post(config('homeful-sellers.end-points.contact').'api/get-contact-by-homeful-id', [
+            'code' => $voucher_code,
+        ]);
 
         return redirect()->back()->with('event', [
             'name' => 'voucher_generated',
             'data' => [
                 'code' => $voucher_code,
-                'contact' => $this->getContactData($action)
+                'contact' => $request->json('data')
             ]
         ]);
     }
