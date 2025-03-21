@@ -20,7 +20,7 @@ class ReferenceObserver
     public function redeemed(Reference $reference): void
     {
         $user = $reference->owner;
-        $contact = $reference->getContact();
+        $contact =$reference->getEntities(\Homeful\Contacts\Models\Customer::class)->first();
 
 
 
@@ -42,9 +42,12 @@ class ReferenceObserver
         logger($a);
         logger($project_code);
 
-//        /** This is main reason for this listener, to attach the seller commission code to the contact */
-//        $contact->reference_code = GetSellerCommissionCode::run($user, $project_code);
-//        $contact->save();
+        /** This is main reason for this listener, to attach the seller commission code to the contact */
+        $order = $contact->order;
+        $order = $order['sellect_commission_code'] =  GetSellerCommissionCode::run($user, $project_code);
+//        $contact->reference_code =
+        $contact->order = $order;
+        $contact->save();
 
         $user->notify(new ConsultedToAvailedSellerNotification($reference->code, $project_code));
         $user->notify(new OnboardedToPaidSellerNotification($reference->code));
