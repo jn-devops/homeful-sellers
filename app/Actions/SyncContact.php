@@ -82,7 +82,7 @@ class SyncContact
             $action = app(PersistContactAction::class);
             $validator = Validator::make($attributes, $action->rules());
             $validated = $validator->validated();
-            $contact = $action->run($validated);
+            $contact = $action->run($attributes);
         }
 
         return $contact instanceof Contact ? $contact : false;

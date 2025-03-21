@@ -23,9 +23,10 @@ class GenerateVoucherCode
             ? $project_code
             : Project::where('code', $project_code)->first();
         $seller_commission_code = GetSellerCommissionCode::run($user, $project);
+        self::$contact = SyncContact::run($contact_reference_code);
         $entities = [
             'input' => app(Input::class)->create(compact('seller_commission_code')),
-            'contact' => self::$contact = SyncContact::run($contact_reference_code)
+            'contact' => self::$contact
         ];
         self::$reference = References::withEntities(...$entities)
             ->withOwner($user)
