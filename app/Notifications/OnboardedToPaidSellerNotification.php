@@ -47,8 +47,9 @@ class OnboardedToPaidSellerNotification extends Notification implements ShouldQu
 
 
         return (new MailMessage)
+            ->subject($name . ' has paid the Home Loan Consultation Fee.')
             ->line('Hi ' . $notifiable->name)
-            ->line($name . ' has paid the consultation fee.');
+            ->line($name . ' has paid the Home Loan Consultation Fee.');
     }
 
     /**

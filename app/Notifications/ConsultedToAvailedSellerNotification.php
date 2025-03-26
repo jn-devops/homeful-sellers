@@ -57,6 +57,7 @@ class ConsultedToAvailedSellerNotification extends Notification
         }
 
         return (new MailMessage)
+            ->subject($name . ' has booked a unit at ' . $project_name)
             ->line('Hi ' . $notifiable->name)
             ->line($name . ' has booked a unit at ' . $project_name);
     }
