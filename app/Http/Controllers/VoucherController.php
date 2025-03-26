@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\GenerateVoucherRequest;
 use App\Actions\GenerateVoucherCode;
+use App\Models\User;
+use App\Notifications\OnboardedToPaidSellerNotification;
+use FrittenKeeZ\Vouchers\Models\VoucherEntity;
+use Homeful\Contacts\Models\Contact;
+use Homeful\References\Models\Reference;
 use Inertia\{Inertia, Response};
 use Illuminate\Http\Request;
 use Homeful\Contacts\Classes\ContactMetaData;
@@ -46,5 +51,11 @@ class VoucherController extends Controller
 
         return $contact->getData();
 //        return app(Contacts::class)->fromContactModelToContactMetadata($contact);
+    }
+
+    public function BuyerPaidNotification(Request $request){
+        $reference = Reference::where('code',$request->code)->firstOrFail();
+        $user = $reference->owner;
+        $user->notify(new OnboardedToPaidSellerNotification($reference->code));
     }
 }

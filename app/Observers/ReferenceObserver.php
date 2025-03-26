@@ -44,12 +44,12 @@ class ReferenceObserver
 
         /** This is main reason for this listener, to attach the seller commission code to the contact */
         $order = $contact->order;
-        $order = $order['sellect_commission_code'] =  GetSellerCommissionCode::run($user, $project_code);
+        $order[] =['sellect_commission_code'=>GetSellerCommissionCode::run($user, $project_code)] ;
 //        $contact->reference_code =
         $contact->order = $order;
         $contact->save();
 
         $user->notify(new ConsultedToAvailedSellerNotification($reference->code, $project_code));
-        $user->notify(new OnboardedToPaidSellerNotification($reference->code));
+//        $user->notify(new OnboardedToPaidSellerNotification($reference->code));
     }
 }
