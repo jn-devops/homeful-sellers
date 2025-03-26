@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\APIController;
 use App\Http\Controllers\RedeemController;
 use App\Http\Controllers\VoucherController;
 use Illuminate\Support\Facades\Route;
@@ -13,3 +14,5 @@ Route::post('redeem/{voucher}/{project?}', RedeemController::class)->name('redee
 
 Route::post('buyer-paid-notification',[VoucherController::class,'BuyerPaidNotification'])->name('buyer-paid-notification')
     ->middleware('auth:sanctum');
+
+Route::post('auth/login',[APIController::class,'Auth'])->name('auth-login');
