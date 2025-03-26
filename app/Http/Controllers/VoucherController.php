@@ -54,8 +54,12 @@ class VoucherController extends Controller
     }
 
     public function BuyerPaidNotification(Request $request){
-        $reference = Reference::where('code',$request->code)->firstOrFail();
-        $user = $reference->owner;
-        $user->notify(new OnboardedToPaidSellerNotification($reference->code));
+        if ($request->user()->email !== 'llenardalcantara@gmail.com') {
+            abort(403, 'Unauthorized');
+        }else{
+            $reference = Reference::where('code',$request->code)->firstOrFail();
+            $user = $reference->owner;
+            $user->notify(new OnboardedToPaidSellerNotification($reference->code));
+        }
     }
 }
