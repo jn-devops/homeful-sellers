@@ -83,6 +83,8 @@ class SyncContact
             $validator = Validator::make($attributes, $action->rules());
             $validated = $validator->validated();
             $contact = $action->run($attributes);
+            $contact->save();
+            $contact = app(Contact::class)->where('reference_code',$homeful_id)->first();
         }
 
         return $contact instanceof Contact ? $contact : false;
