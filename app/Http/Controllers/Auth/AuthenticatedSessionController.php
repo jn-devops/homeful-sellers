@@ -81,37 +81,6 @@ public function store(Request $request)
         'email' => 'The provided credentials are incorrect.',
     ]);
 }
-
-    // public function store(Request $request)
-    // {
-    //     // Validate user input
-    //     $credentials = $request->validate([
-    //         'email' => ['required', 'email'],
-    //         'password' => ['required'],
-    //     ]);
-    //     // Send credentials to external API
-    //     $response = Http::asForm()->post('https://elanvital.enclavewrx.io/developers/api_storefront_seller/seller_login_info/admin/password', [
-    //         'email' => $credentials['email'],
-    //         'password' => $credentials['password'],
-    //     ]);
-    
-    //     if ($response->successful()) {
-    //         $data = $response->json();
-    //         // dd( $data ['email']);
-    //         // You can store token or user info in session or database
-    //         Session::put('external_token', $data['password']);
-    //         Session::put('external_user', $data['email']);
-    //         // Optionally, log the user into Laravel's system using a local user
-    //         // Or use a custom guard if you want to manage session manually
-    
-    //         return redirect()->intended('/dashboard');
-    //     }
-    
-    //     return back()->withErrors([
-    //         'email' => 'The provided credentials are incorrect.',
-    //     ]);
-    // }
-    
     /**
      * Destroy an authenticated session.
      */

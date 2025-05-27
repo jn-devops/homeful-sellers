@@ -23,7 +23,7 @@ class BuyerController extends Controller
         }
         // dd($projects);
         $response = Http::asForm()
-        // ->withToken('a34c9bef423b68fed296bd1e28e660a3bf282134c1dddb5458275b4bbb92360e') // Replace with your actual token
+        // ->withToken('a34c9bef423b68fed296bd1e28e660a3bf282134c1dddb5458275b4bbb92360e')
         ->get('https://everyhome.enclavewrx.io/developers/api_storefront_seller/get_seller_projects/'.$id.'/'.$table);
         $projects = $response->json();
         // dd($projects);
