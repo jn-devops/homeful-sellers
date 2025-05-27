@@ -17,7 +17,7 @@ class SyncContact
      * @var array|string[]
      */
     protected array $keys = [
-        'reference_code'
+        'contact_reference_code'
     ];
 
     /**
@@ -27,13 +27,22 @@ class SyncContact
      */
     protected function sync(array $validated): false|Contact
     {
-        /** get the json response of the specific contact in Homeful Contacts */
-        $response = Http::acceptJson()->get($this->getRoute($validated));
 
+        $url =$this->getRoute($validated);
+        $response = Http::acceptJson()->get($this->getRoute($validated));
+        // $response = Http::acceptJson()->get("https://contacts-staging.homeful.ph/api/references/H-4EYR4A");
+        // dd($response->json('contact'));
         return $response->ok()
             ? $this->persistContact($response)
             : false
             ;
+        /** get the json response of the specific contact in Homeful Contacts */
+        // $response = Http::acceptJson()->get($this->getRoute($validated));
+
+        // return $response->ok()
+        //     ? $this->persistContact($response)
+        //     : false
+        //     ;
     }
 
     /**
@@ -45,7 +54,6 @@ class SyncContact
     {
         $attribs = is_array($contact_reference_code) ? $contact_reference_code : compact('contact_reference_code');
         $validated = Validator::validate($attribs, $this->rules());
-
         return $this->sync($validated);
     }
 
@@ -74,11 +82,15 @@ class SyncContact
         /** cast the specific contact node of the json response to ContactMetaData
          *  then transform to array for further consumption of a Contact model.
          */
+        // dd($response->json('contact'));
         $attributes = ContactMetaData::from($response->json('contact'))->toArray();
 
         /** retrieve key values to used for searching unique values in the contacts table */
-        $keys = Arr::only($attributes, $this->keys);
-
+        // $keys = Arr::only($attributes['order'], $this->keys);
+        $keys=[
+            "reference_code" => $attributes['order']['homeful_id']
+        ];
+        // dd($keys,$attributes);
         /** persist or update the contact in the contacts table */
         $contact = app(Contact::class)->firstOrCreate($keys, $attributes);
 

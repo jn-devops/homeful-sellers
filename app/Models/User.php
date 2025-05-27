@@ -36,7 +36,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'seller_commission_code'
+        'seller_id', //added ggvivar 05/22/2025
+        'seller_commission_code',
     ];
 
     /**
