@@ -9,9 +9,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Arr;
 use App\Models\User;
-use Homeful\Contacts\Actions\PersistContactAction;
 
-class SyncContact
+class SyncContactv2
 {
     use AsAction;
 
@@ -27,7 +26,7 @@ class SyncContact
      * @return Contact|false
      * @throws \Illuminate\Http\Client\ConnectionException
      */
-    protected function sync(user $user, array $validated): false|Contact
+    protected function sync(array $user, array $validated): false|Contact
     {
         // dd($user);
         $url =$this->getRoute($validated);
@@ -52,7 +51,7 @@ class SyncContact
      * @return Contact|false
      * @throws \Illuminate\Http\Client\ConnectionException
      */
-    public function handle(user $user, string|array $contact_reference_code): false|Contact
+    public function handle(array $user, string|array $contact_reference_code): false|Contact
     {
         $attribs = is_array($contact_reference_code) ? $contact_reference_code : compact('contact_reference_code');
         $validated = Validator::validate($attribs, $this->rules());
@@ -75,35 +74,11 @@ class SyncContact
         ];
     }
 
-    public function newPersistContact(string $homeful_id): false|Contact{
-        $request =Http::withToken(config('homeful-sellers.keys.contact_key'))->post(config('homeful-sellers.end-points.contact').'api/get-contact-by-homeful-id', [
-            'code' => $homeful_id,
-        ]);
-
-
-        if($request->ok()) {
-            $attributes = $request->json('data');
-            $keys = Arr::only($attributes, $this->keys);
-        }
-
-        $contact = app(Contact::class)->where('reference_code',$homeful_id)->first();
-        if($contact==null){
-            $action = app(PersistContactAction::class);
-            $validator = Validator::make($attributes, $action->rules());
-            $validated = $validator->validated();
-            $contact = $action->run($attributes);
-            $contact->save();
-            $contact = app(Contact::class)->where('reference_code',$homeful_id)->first();
-        }
-
-        return $contact instanceof Contact ? $contact : false;
-    }
-
     /**
      * @param \GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response $response
      * @return false|Contact
      */
-    public function persistContact(user $user,\GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response $response): false|Contact
+    public function persistContact(array $user,\GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response $response): false|Contact
     {
         /** cast the specific contact node of the json response to ContactMetaData
          *  then transform to array for further consumption of a Contact model.
@@ -112,8 +87,8 @@ class SyncContact
         // dd($user);
         $attributes = ContactMetaData::from($response->json('contact'))->toArray();
         // $attributes['order']['seller_id'] = $user->seller_email;
-        $attributes['order']['seller_commission_code'] = $user->meta->seller_commission_code;
-        $attributes['landline'] = $user->email."/".$user->meta->seller_commission_code;
+        $attributes['order']['seller_commission_code'] = $user['seller_commission_code'];
+        $attributes['landline'] = $user['email']."/".$user['seller_commission_code'];
         // $attributes['seller_info'] =[
         //     "seller_id"=>$user->id,
         //     "seller_commission_code" => $user->meta->seller_commission_code

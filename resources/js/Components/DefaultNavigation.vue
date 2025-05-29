@@ -7,24 +7,23 @@ import {useForm, usePage, Link} from '@inertiajs/vue3';
     <Disclosure as="nav" class="bg-white shadow" v-slot="{ open }">
         <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
             <div class="relative flex h-16 justify-between">
-                <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                <!-- Mobile menu button -->
+                <!-- <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
                 <DisclosureButton class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#C38400]">
                     <span class="absolute -inset-0.5" />
                     <span class="sr-only">Open main menu</span>
                     <Bars3Icon v-if="!open" class="block size-6" aria-hidden="true" />
                     <XMarkIcon v-else class="block size-6" aria-hidden="true" />
                 </DisclosureButton>
-                </div>
+                </div> -->
                 <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div class="flex shrink-0 items-center cursor-pointer">
-                    <Link :href="route('voucher.create')" >
+                    <Link :href="route('dashboard')" >
                         <img class="h-7 w-auto" :src="usePage().props.data.appURL+'/images/default_logo.svg'" />
                     </Link>
                 </div>
                 <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
                     <!-- Current: "border-[#C38400] text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
-                    <Link :href="route('voucher.create')" :class="route().current('voucher.create') ? 'border-[#C38400] text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'" class="inline-flex items-center border-b-2  px-1 pt-1 text-sm font-medium ">Voucher</Link>
+                    <Link :href="route('dashboard')" :class="route().current('dashboard') ? 'border-[#C38400] text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'" class="inline-flex items-center border-b-2  px-1 pt-1 text-sm font-medium ">Dashboard</Link>
                     <Link :href="route('projects.index')" :class="route().current('projects.index') ? 'border-[#C38400] text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'" class="inline-flex items-center border-b-2  px-1 pt-1 text-sm font-medium ">Projects</Link>
                 </div>
                 </div>
@@ -54,8 +53,11 @@ import {useForm, usePage, Link} from '@inertiajs/vue3';
                             <Link :href="route('profile.edit')" :class="[active ? 'bg-gray-100 outline-none' : '', 'block px-4 py-2 text-sm text-gray-700']">Profile</Link>
                         </MenuItem>
                         <MenuItem v-slot="{ active }">
-                            <Link :href="route('sync-projects.create')" :class="[active ? 'bg-gray-100 outline-none' : '', 'block px-4 py-2 text-sm text-gray-700']">Sync Project</Link>
+                            <Link :href="route('dashboard')" :class="[active ? 'bg-gray-100 outline-none' : '', 'block px-4 py-2 text-sm text-gray-700']">Homepage</Link>
                         </MenuItem>
+                        <!-- <MenuItem v-slot="{ active }">
+                            <Link :href="route('sync-projects.create')" :class="[active ? 'bg-gray-100 outline-none' : '', 'block px-4 py-2 text-sm text-gray-700']">Sync Project</Link>
+                        </MenuItem> -->
                         <MenuItem v-slot="{ active }">
                             <Link :href="route('logout')"
                                 method="post"

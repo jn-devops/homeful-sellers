@@ -9,15 +9,16 @@ use Homeful\Properties\Models\Project;
 use Homeful\References\Models\Input;
 use Homeful\Contacts\Models\Customer as Contact;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
-class GenerateVoucherCode
+class GenerateVoucherCodev2
 {
     use AsAction;
 
     protected static Reference $reference;
     protected static Contact $contact;
 
-    public function handle(User $user, string $contact_reference_code, Project|string $project_code = null): string|false
+    public function handle(string $contact_reference_code, Project|string $project_code = null, array $user ): string|false
     {
         // dd(SyncContact::run($contact_reference_code));
         // return $user;
@@ -25,19 +26,24 @@ class GenerateVoucherCode
         $project = $project_code instanceof Project
             ? $project_code
             : Project::where('name', $project_code)->first();
-        $seller_commission_code = GetSellerCommissionCode::run($user, $project);
-    
+        // $seller_commission_code = GetSellerCommissionCode::run($user, $project);
+        $seller_commission_code = $user['seller_commission_code'];
+        // return  $seller_commission_code ;
         $entities = [
             'input' => app(Input::class)->create(compact('seller_commission_code')),
-            'contact' => self::$contact = SyncContact::run($user,$contact_reference_code)
+            'contact' => self::$contact = SyncContactv2::run($user,$contact_reference_code)
         ];
+        // return $entities;
+        // $curr_user = Auth::user();
+        // return $user;
+        // return User::where('email', $user['email'])->first()?->toArray();
         self::$reference = References::withEntities(...$entities)
-            ->withOwner($user)
+            ->withOwner(User::where('email', $user['email'])->first())
             ->withMetadata(['project' => $project])
             ->withStartTime(now())
             ->create();
         $reference_code = self::$reference?->code;
-
+        // return "pass";
         return $reference_code ?: false;
     }
 

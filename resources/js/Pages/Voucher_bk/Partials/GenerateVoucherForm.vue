@@ -28,10 +28,17 @@ const projects = usePage().props.projects.map(item => ({
    id: item.code,
    name: item.name
 }));
-
 const form = useForm({
     contact_reference_code: '',
     project_code: '',
+    first_name:'',
+    last_name:'',
+    email:'',
+    mobile:'',
+    date_of_birth:'',
+    gross_monthly_income:'',
+    cobo_gross_monthly_income:'',
+    cobo_date_of_birth:''
 });
 
 const showingVoucherCode = ref(false);
@@ -61,64 +68,91 @@ watch (
     },
     { immediate: true }
 );
-const submit = async () => {
-console.log(JSON.stringify(form.data()))
-    try {
-        const res_arr = {
-            user:user,
-            contact_reference_code: "H-QT9G7X",
-            project_code: "PAGSIBOL VILLAGE MAGALANG PAMPANGA" 
-        };
-        console.log(res_arr);
-        // const res_voucher = await fetch(route('api.voucher.generate'), {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'Accept': 'application/json'
-        //          },
-        //     body: JSON.stringify(res_arr),
-        // });
-        // const res_vouchers = await res_voucher.json(); 
-        // console.log(res_vouchers['voucher']);
-        const res_update = await fetch(route('api.buyer.update'), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                contact_reference_code: "H-C47YHH",
-                match_link: "https://contracts-staging.homeful.ph/avail/create?reference=JN-XYVRQQ&voucher=LH-5FDKYG"
-            }),
-        });
-        console.log(res_update);
-        alert('Registration successful!');
-        // window.location.href = '/dashboard';
 
-    } catch (error) {
-        console.error('Network or server error:', error);
-        alert('An error occurred during submission.');
-    }
-};
 </script>
 
 <template>
     <section>
 
         <form
-            @submit.prevent="submit"
+            @submit.prevent="form.post(route('voucher.store'))"
             class="space-y-6"
-        >
+        >   
+            <div>
+                <h3 class="fw-bold">Buyer Info</h3>
+                <div>
+                <GradientStyleInput 
+                    label="First Name"
+                    required
+                    v-model="form.first_name"
+                    placeholder="Enter First Name"
+                    :error="form.errors.first_name"
+                />
+            </div>
             <div>
                 <GradientStyleInput 
-                    label="Homeful ID"
+                    label="Last Name"
                     required
-                    v-model="form.contact_reference_code"
-                    placeholder="Enter Homeful ID"
-                    :error="form.errors.contact_reference_code"
+                    v-model="form.last_name"
+                    placeholder="Enter Last Name"
+                    :error="form.errors.last_name"
+                />
+            </div>
+            <div>
+                <GradientStyleInput 
+                    label="Email"
+                    required
+                    v-model="form.email"
+                    placeholder="Enter email"
+                    :error="form.errors.email"
+                />
+            </div>
+            <div>
+                <GradientStyleInput 
+                    label="Mobile No"
+                    required
+                    v-model="form.mobile"
+                    placeholder="+639XXXXXXXXX"
+                    :error="form.errors.mobile"
+                />
+            </div>
+            <div>
+                <GradientStyleInput 
+                    label="Birthdate"
+                    required
+                    v-model="form.date_of_birth"
+                    placeholder="Enter Birthdate"
+                    :error="form.errors.date_of_birth"
+                />
+            </div>
+            <div>
+                <GradientStyleInput 
+                    label="Gross Monthly Income"
+                    required
+                    v-model="form.gross_monthly_income"
+                    placeholder="Enter GMI"
+                    :error="form.errors.gross_monthly_income"
+                />
+            </div>
+            <div> 
+                <GradientStyleInput 
+                    label="Coborrower Gross Monthly Income"
+                    v-model="form.cobo_gross_monthly_income"
+                    placeholder="Enter GMI(Optional)"
+                    :error="form.errors.cobo_gross_monthly_income"
+                />
+            </div>
+            <div> 
+                <GradientStyleInput 
+                    label="Coborrower Birthdate"
+                    v-model="form.cobo_date_of_birth"
+                    placeholder="Enter Birthdate(Optional)"
+                    :error="form.errors.cobo_date_of_birth"
                 />
             </div>
 
+        </div>
+        <hr>
             <div>
                 <GradientSelectCombobox 
                     label="Projects"
@@ -129,7 +163,7 @@ console.log(JSON.stringify(form.data()))
             </div>
 
             <div class="flex flex-col items-center">
-                <PlainBlackButton type="submit" :disabled="form.processing">Generate</PlainBlackButton>
+                <PlainBlackButton type="submit" :disabled="form.processing">Reserve</PlainBlackButton>
 
                 <Transition
                     enter-active-class="transition ease-in-out"
