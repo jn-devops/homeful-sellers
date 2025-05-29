@@ -132,7 +132,7 @@ console.log(JSON.stringify(form.data()))
         });
         console.log(res_update);
         alert('Registration successful!');
-        // window.location.href = '/dashboard';
+        window.location.href = '/dashboard';
         } catch (error) {
             console.error('Network or server error:', error);
             alert('An error occurred during submission.');
