@@ -21,14 +21,14 @@ class GenerateVoucherCodev2
     public function handle(string $contact_reference_code, Project|string $project_code = null, array $user ): string|false
     {
         // dd(SyncContact::run($contact_reference_code));
-        // return $user;
+        // return $user['email'];
         // $project_code ="Pasinaya Homes Magalang Pampanga";
         $project = $project_code instanceof Project
             ? $project_code
             : Project::where('name', $project_code)->first();
         // $seller_commission_code = GetSellerCommissionCode::run($user, $project);
         $seller_commission_code = $user['seller_commission_code'];
-        // return  $seller_commission_code ;
+        // return  $contact_reference_code ;
         $entities = [
             'input' => app(Input::class)->create(compact('seller_commission_code')),
             'contact' => self::$contact = SyncContactv2::run($user,$contact_reference_code)

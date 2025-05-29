@@ -57,7 +57,7 @@ defineProps({
                         <div class="col-6">{{ form.email }}</div>
                     </div>
                     <div class="row mb-2" style="display: none;">
-                        <div class="col-sm-3 fw-bold">Seller Code:</div>
+                        <div class="col-sm-3 fw-bold">Seller Booking Code:</div>
                         <div class="col-sm-9">{{ form.seller_commission_code }}</div>
                     </div>
                     <div>

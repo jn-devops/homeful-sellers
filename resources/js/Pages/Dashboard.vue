@@ -19,26 +19,6 @@ const buyers = usePage().props.buyers.map(buyer => ({
     mobile: buyer.mobile,
     match_link: buyer.other_mobile
 }));
-
-// const buyers = ref([
-//   { id: 1, name: 'Test 1', email: 'test1@example.com', mobile: '09123456789',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 2, name: 'Test 2', email: 'test2@example.com', mobile: '09987654321',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 3, name: 'Test 3', email: 'test3@example.com', mobile: '09051234567',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 4, name: 'Test 1', email: 'test1@example.com', mobile: '09123456789',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 5, name: 'Test 2', email: 'test2@example.com', mobile: '09987654321',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 6, name: 'Test 3', email: 'test3@example.com', mobile: '09051234567',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 7, name: 'Test 1', email: 'test1@example.com', mobile: '09123456789',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 8, name: 'Test 2', email: 'test2@example.com', mobile: '09987654321',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 9, name: 'Test 3', email: 'test3@example.com', mobile: '09051234567',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 10, name: 'Test 1', email: 'test1@example.com', mobile: '09123456789',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 11, name: 'Test 2', email: 'test2@example.com', mobile: '09987654321',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 12, name: 'Test 3', email: 'test3@example.com', mobile: '09051234567',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 13, name: 'Test 1', email: 'test1@example.com', mobile: '09123456789',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 14, name: 'Test 2', email: 'test2@example.com', mobile: '09987654321',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 15, name: 'Test 3', email: 'test3@example.com', mobile: '09051234567',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-  
-// ]);
-
 const showModal = ref(false);
 const selectedBuyer = ref({});
 const hoveredBuyer = ref(null);
@@ -85,7 +65,7 @@ function copyToClipboard(text) {
         <div class="w-full sm:w-full md:w-[500px]">
           <h2 class="text-xl font-bold">{{ user.name }}</h2>
           <h5 class="text-sm font-semibold">
-            Seller Code:
+            Seller Booking Code:
             <span class="text-[#C38400]">{{ user.seller_commission_code }}</span>
           </h5>
         </div>
@@ -147,16 +127,16 @@ function copyToClipboard(text) {
         <button type="button" class="btn-close" @click="closeQRModal"></button>
       </div>
       <div class="modal-body text-center ">
-        <img v-if="qrImage" :src="qrImage" alt="QR Code" />
+        <img v-if="qrImage" class="d-block mx-auto"  :src="qrImage" alt="QR Code" />
         <p class="mt-3">
         <span>-------------or Copy the link------------</span><br>
-  <button 
-    class="btn btn-outline-primary btn-sm mt-3"
-    @click="copyToClipboard(qrLink)"
-  >
-    Copy Link
-  </button>
-</p>
+      <button 
+        class="btn btn-outline-primary btn-sm mt-3"
+        @click="copyToClipboard(qrLink)"
+      >
+        Copy Link
+      </button>
+    </p>
 
       </div>
       <div class="modal-footer">
@@ -173,7 +153,7 @@ function copyToClipboard(text) {
             class="text-sm text-center text-white bg-black fw-bold"
             style="width: 100%; height: 40px;"
         >
-            Register Buyer
+            Book Sales
         </button>
         <button
             class="mt-3 text-sm text-center text-white bg-secondary fw-bold"

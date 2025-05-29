@@ -4,11 +4,14 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import GradientStyleInput from '@/Components/Inputs/GradientStyleInput.vue';
 import GradientStylePhoneNumber from '@/Components/Inputs/GradientStylePhoneNumber.vue';
 import GradientSelectCombobox from '@/Components/Inputs/GradientSelectCombobox.vue';
+import DefaultModal from '@/Components/DefaultModal.vue';
 import { Head, usePage ,useForm, Link, router} from '@inertiajs/vue3';
 import Agreements from '@/Components/Agreements.vue';
 import { ref } from "vue";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import QRCode from 'qrcode';
+
 
 const props = defineProps({
     projects: Array,
@@ -36,8 +39,11 @@ const form = useForm({
 const showTC = ref(false)
 const coboChecked = ref(false);
 const showAgreementPage = ref(false)
-const disclaimerChecked = ref(false)
-;
+const disclaimerChecked = ref(false);
+const matchLink = ref('');
+const qrCodeDataUrl = ref('');
+const showQRCode = ref(false);
+
 const toggleTC = () => {
     showTC.value = !showTC.value
 }
@@ -55,6 +61,10 @@ const addCoborrower = () => {
     coboChecked.value = true
     // togglePP()
 }
+const closeModal = () => {
+    showQRCode.value = false;
+    window.location.href = '/dashboard';
+};
 const submit = async () => {
 console.log(JSON.stringify(form.data()))
     try {
@@ -131,8 +141,17 @@ console.log(JSON.stringify(form.data()))
             }),
         });
         console.log(res_update);
+        matchLink.value = result['match_link'] + "&voucher=" + res_vouchers['voucher'];
+        QRCode.toDataURL(matchLink.value)
+        .then(url => {
+            qrCodeDataUrl.value = url;
+            showQRCode.value = true;
+        })
+        .catch(err => {
+            console.error('QR Code generation failed:', err);
+        });
         alert('Registration successful!');
-        window.location.href = '/dashboard';
+        // window.location.href = '/dashboard';
         } catch (error) {
             console.error('Network or server error:', error);
             alert('An error occurred during submission.');
@@ -143,7 +162,15 @@ console.log(JSON.stringify(form.data()))
         alert('An error occurred during submission.');
     }
 };
-
+const copyToClipboard = async () => {
+    try {
+        await navigator.clipboard.writeText(matchLink.value);
+        alert('Link copied to clipboard!');
+    } catch (err) {
+        console.error('Failed to copy:', err);
+        alert('Failed to copy link.');
+    }
+};
 </script>
 
 <template>
@@ -270,20 +297,13 @@ console.log(JSON.stringify(form.data()))
                 <div class="mt-3 ">
                     <div class="flex items-center mb-4 gap-2" @click="viewAgreements">
                         <input type="checkbox"  @click="viewAgreements" v-model="disclaimerChecked" id="default-checkbox" class="w-5 h-5 text-[#F7C947] rounded-sm focus:ring-[#E94572]" style=" border-radius:25%;">
-                         <!-- <div v-if="disclaimerChecked" class="w-6 h-5 bg-[#F7C947] rounded border-2 border-black">
-                            <svg class="w-full h-full text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 11.917 9.724 16.5 19 7.5"/>
-                            </svg>
-                         </div>
-                         <div v-else class="w-[25px] h-[20px] rounded border-2 border-black">
-                         </div> -->
+
                         <label class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                             I've read and agree with the <b class="underline cursor-pointer">Terms of Use</b> and the <b class="underline cursor-pointer">Privacy Policy</b>.
                         </label>
                     </div>
                     <div class="mt-3">
                     <!-- <PlainBlackButton type="submit" :disabled="!disclaimerChecked"> -->
-
                     <div class="container pt-3">
                     <button
                         class="text-sm text-center text-white bg-black fw-bold"
@@ -306,6 +326,42 @@ console.log(JSON.stringify(form.data()))
                 @close="togglePP"
                 v-model:disclaimerChecked="disclaimerChecked"
             />
+            <DefaultModal v-if="showQRCode" @close="closeModal">
+                <div class="p-6 text-center">
+                    <h2 class="text-lg font-medium text-gray-900 mb-4">
+                        Registration Successful!
+                    </h2>
+                    <p class="text-sm text-gray-600 mb-4">
+                        Scan the QR code below or copy the link:
+                    </p>
+                    <div class="flex justify-center mb-4">
+                        <img :src="qrCodeDataUrl" alt="QR Code" class="w-48 h-48" />
+                    </div>
+                    <div class="flex flex-col items-center space-y-2">
+                        <input
+                            type="text"
+                            :value="matchLink"
+                            readonly
+                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+                        />
+                        <button
+                            @click="copyToClipboard"
+                            class="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+                        >
+                            Copy Link
+                        </button>
+                    </div>
+                    <div class="mt-6">
+                        <button
+                            class="text-sm font-medium text-white bg-gray-800 px-4 py-2 rounded"
+                            @click="closeModal"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </DefaultModal>
+
         </div>
             </div>
         </div>

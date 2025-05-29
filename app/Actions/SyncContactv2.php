@@ -29,7 +29,7 @@ class SyncContactv2
     protected function sync(array $user, array $validated): false|Contact
     {
         // dd($user);
-        $url =$this->getRoute($validated);
+        // $url =$this->getRoute($validated);
         $response = Http::acceptJson()->get($this->getRoute($validated));
         // $response = Http::acceptJson()->get("https://contacts-staging.homeful.ph/api/references/H-4EYR4A");
         // dd($response->json('contact'));
@@ -89,10 +89,13 @@ class SyncContactv2
         // $attributes['order']['seller_id'] = $user->seller_email;
         $attributes['order']['seller_commission_code'] = $user['seller_commission_code'];
         $attributes['landline'] = $user['email']."/".$user['seller_commission_code'];
-        // $attributes['seller_info'] =[
-        //     "seller_id"=>$user->id,
-        //     "seller_commission_code" => $user->meta->seller_commission_code
-        // ];
+
+        $attributes['addresses'] =[
+            [
+                "type"=>"Present", 
+                "author"=>"Seller App", 
+                "region"=>"National Capital Region (NCR)", 
+             ]];
         
         // dd($attributes);
         /** retrieve key values to used for searching unique values in the contacts table */
