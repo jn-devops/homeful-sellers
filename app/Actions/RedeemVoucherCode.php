@@ -15,7 +15,6 @@ class RedeemVoucherCode
     {
         $voucher_code = $reference->code;
         $user = $reference->owner;
-
         return References::redeem($voucher_code, $user, $meta);
     }
 

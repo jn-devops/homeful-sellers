@@ -13,6 +13,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const props = defineProps({
     projects: Array,
 });
+const user = usePage().props.auth.user;
 const projects = usePage().props.projects.map(item => ({
    id: item.project_code,
    name: item.name
@@ -76,28 +77,67 @@ console.log(JSON.stringify(form.data()))
         const result = await response.json();
         console.log('Success:', result['homeful_id']);
         // form.post(route('voucher.store'))"
-         // transaction_code => 'JN-TYUARP', 
+        // transaction_code => 'JN-TYUARP', 
      
         // match_link: 'https://contracts-staging.homeful.ph/avail/create?reference=JN-TYUARP'
             
+        // const res_arr = {
+        //     contact_reference_code: result['homeful_id'],
+        //     project_code: form.project_code 
+        // };
+        // console.log(res_arr);
+
+        // const res_voucher = await fetch(route('voucher.generate'), {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'Accept': 'application/json'
+        //     },
+        //     body: JSON.stringify(res_arr),
+        // });
+        // console.log(res_voucher)
+        // alert('Registration successful!');
+        // window.location.href = '/dashboard';
         const res_arr = {
+            user:user,
             contact_reference_code: result['homeful_id'],
-            project_code: form.project_code  
+            project_code: form.project_code 
         };
         console.log(res_arr);
-
-        const res_voucher = await fetch(route('voucher.generate'), {
+        //addedd
+        try {
+        console.log(res_arr);
+        const res_voucher = await fetch(route('api.voucher.generate'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
-            },
+                 },
             body: JSON.stringify(res_arr),
         });
-        console.log(res_voucher)
+        const res_vouchers = await res_voucher.json(); 
+        console.log(res_vouchers['voucher']);
+        console.log(result['match_link']+"&voucher="+res_vouchers['voucher'])
+        
+        const res_update = await fetch(route('api.buyer.update'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                contact_reference_code: result['homeful_id'],
+                match_link: result['match_link']+"&voucher="+res_vouchers['voucher']
+            }),
+        });
+        console.log(res_update);
         alert('Registration successful!');
-        window.location.href = '/dashboard';
-
+        // window.location.href = '/dashboard';
+        } catch (error) {
+            console.error('Network or server error:', error);
+            alert('An error occurred during submission.');
+        }
+        //end
     } catch (error) {
         console.error('Network or server error:', error);
         alert('An error occurred during submission.');

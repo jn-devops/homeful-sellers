@@ -17,7 +17,7 @@ const buyers = usePage().props.buyers.map(buyer => ({
     name: buyer.first_name + " " + buyer.last_name, 
     email: buyer.email, 
     mobile: buyer.mobile,
-    match_link: "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP"
+    match_link: buyer.other_mobile
 }));
 
 // const buyers = ref([
@@ -130,7 +130,7 @@ function copyToClipboard(text) {
                 style="text-decoration: none; color:black"
                 @click.prevent="openQRModal(buyer.match_link)"
             >
-                Show <i class="bi bi-qr-code"></i>
+                View <i class="bi bi-qr-code"></i>
             </a>
             </td>
         </tr>
@@ -138,7 +138,7 @@ function copyToClipboard(text) {
     </table>
   </div>
 </div>
-<!--QR modal-->
+<!--QR modal--> 
 <div v-if="showQRModal" class="modal fade show d-block" tabindex="-1" style="background: rgba(0, 0, 0, 0.5);">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -176,9 +176,8 @@ function copyToClipboard(text) {
             Register Buyer
         </button>
         <button
-            class="mt-3 text-sm text-center text-white bg-black fw-bold"
+            class="mt-3 text-sm text-center text-white bg-secondary fw-bold"
             style="width: 100%; height: 40px;"
-            disabled
         >
             Register Prospect
         </button>

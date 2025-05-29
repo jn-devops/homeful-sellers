@@ -57,7 +57,9 @@ public function store(Request $request)
     // dd($response->json());
     if ($response->successful()) {
         $data = $response->json();
-     
+        // dd($data );
+        if($data['message'] === "Login successful"){ //papalitan sa CS
+        
         Session::put('external_token', $data['data']['password']);
         Session::put('external_user', $data['data']['email']);
 
@@ -65,7 +67,7 @@ public function store(Request $request)
         $user = User::updateOrCreate(
             ['email' => $data['data']['email']],
             [   
-                'name' => $data['data']['Seller'], 
+                'name' => $data['data']['first_name']. " " . $data['data']['last_name'], 
                 'seller_id' => $data['data']['id'],
                 'seller_commission_code' => $data['data']['SalesForceCode'],
                 'password' => $data['data']['password'],
@@ -75,6 +77,13 @@ public function store(Request $request)
         Auth::login($user);
         // dd($user);
         return redirect('/dashboard');
+        }
+        else
+        {
+            return back()->withErrors([
+                'email' => 'The provided credentials are incorrect.',
+            ]);  
+        }
     }
 
     return back()->withErrors([

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+
+use Homeful\Contacts\Models\Customer as Contact;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Redirect;
@@ -23,7 +25,7 @@ class BuyerController extends Controller
         }
         // dd($projects);
         $response = Http::asForm()
-        // ->withToken('a34c9bef423b68fed296bd1e28e660a3bf282134c1dddb5458275b4bbb92360e')
+        // ->withToken('a34c9bef423b68fed296bd1e28e660a3bf282134c1dddb5458275b4bbb92360e') // Replace with your actual token
         ->get('https://everyhome.enclavewrx.io/developers/api_storefront_seller/get_seller_projects/'.$id.'/'.$table);
         $projects = $response->json();
         // dd($projects);
@@ -33,4 +35,25 @@ class BuyerController extends Controller
             'status' => session('status'),
         ]);
     }
+
+    public function updateBuyer(Request $request)
+    {
+    $validated = $request->validate([
+        'contact_reference_code' => 'required|string',
+        'match_link' => 'required|url'
+    ]);
+
+    $attributes = [
+        'other_mobile' => $validated['match_link']
+    ];
+
+    $keys = [
+        'reference_code' => $validated['contact_reference_code'],
+    ];
+    $contact = Contact::updateOrCreate($keys, $attributes);
+    return response()->json([
+        'success' => true,
+        'contact' => $contact,
+    ]);
+}
 }
