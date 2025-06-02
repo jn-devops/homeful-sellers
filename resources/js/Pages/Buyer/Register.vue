@@ -43,10 +43,12 @@ const disclaimerChecked = ref(false);
 const matchLink = ref('');
 const qrCodeDataUrl = ref('');
 const showQRCode = ref(false);
+const mobileExistsError =ref('');
+const emailExistsError = ref('');
 
-const toggleTC = () => {
-    showTC.value = !showTC.value
-}
+// const toggleTC = () => {
+//     showTC.value = !showTC.value
+// }
 
 const togglePP = () => {
     showAgreementPage.value = !showAgreementPage.value
@@ -66,8 +68,15 @@ const closeModal = () => {
     window.location.href = '/dashboard';
 };
 const submit = async () => {
-console.log(JSON.stringify(form.data()))
-    try {
+    // console.log(JSON.stringify(form.data()))
+
+        const mobileExists = await checkMobileExists("63" + form.mobile.substring(1));
+        const emailExists = await checkEmailExists(form.email);
+
+        if (mobileExists || emailExists) {
+            return; 
+        }
+        try {
         const response = await fetch('https://contracts-staging.homeful.ph/api/register-and-point-to-match', {
             method: 'POST',
             headers: {
@@ -78,14 +87,13 @@ console.log(JSON.stringify(form.data()))
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            console.error('Error:', errorData);
+            const errorData = await response.json()
             alert('Submission failed.');
             return;
         }
 
         const result = await response.json();
-        console.log('Success:', result['homeful_id']);
+
         // form.post(route('voucher.store'))"
         // transaction_code => 'JN-TYUARP', 
      
@@ -113,10 +121,10 @@ console.log(JSON.stringify(form.data()))
             contact_reference_code: result['homeful_id'],
             project_code: form.project_code 
         };
-        console.log(res_arr);
+        // console.log(res_arr);
         //addedd
         try {
-        console.log(res_arr);
+        // console.log(res_arr);
         const res_voucher = await fetch(route('api.voucher.generate'), {
             method: 'POST',
             headers: {
@@ -126,8 +134,8 @@ console.log(JSON.stringify(form.data()))
             body: JSON.stringify(res_arr),
         });
         const res_vouchers = await res_voucher.json(); 
-        console.log(res_vouchers['voucher']);
-        console.log(result['match_link']+"&voucher="+res_vouchers['voucher'])
+        // console.log(res_vouchers['voucher']);
+        // console.log(result['match_link']+"&voucher="+res_vouchers['voucher'])
         
         const res_update = await fetch(route('api.buyer.update'), {
             method: 'POST',
@@ -140,7 +148,7 @@ console.log(JSON.stringify(form.data()))
                 match_link: result['match_link']+"&voucher="+res_vouchers['voucher']
             }),
         });
-        console.log(res_update);
+        // console.log(res_update);
         matchLink.value = result['match_link'] + "&voucher=" + res_vouchers['voucher'];
         QRCode.toDataURL(matchLink.value)
         .then(url => {
@@ -169,6 +177,49 @@ const copyToClipboard = async () => {
     } catch (err) {
         console.error('Failed to copy:', err);
         alert('Failed to copy link.');
+    }
+};
+const checkMobileExists = async (mobile) => {
+    try {
+        const  $url = 'https://contacts-staging.homeful.ph/api/validate/mobile/' + mobile;
+        const response = await fetch($url, { 
+            method: 'GET',
+        });
+        const data = await response.json();
+        if (data.exists) {
+            mobileExistsError.value = 'This mobile number is already used.';
+            return true;
+        } else {
+            mobileExistsError.value = '';
+            return false;
+        }
+    } catch (error) {
+        console.error('Error checking mobile:', error);
+        mobileExistsError.value = '';
+        return false;
+    }
+};
+const checkEmailExists = async (email) => {
+    try {
+        console.log(email);
+        const  $url = 'https://contacts-staging.homeful.ph/api/validate/email/' + email;
+        const response = await fetch($url, { 
+            method: 'GET',
+        });
+
+        const data = await response.json();
+
+        if (data.exists) {
+            emailExistsError.value = 'This email is already used.';
+            return true;
+        } else {
+            emailExistsError.value = '';
+            return false;
+        }
+    } catch (error) {
+        console.error('Error checking mobile:', error);
+        emailExistsError.value = '';
+        return false;
     }
 };
 </script>
@@ -224,7 +275,8 @@ const copyToClipboard = async () => {
                         placeholder="+63 XXX XXXX XXX"
                         required
                         v-model="form.mobile"
-                        :error="form.errors.mobile"
+                        :error="form.errors.mobile || mobileExistsError"
+                        @input="mobileExistsError = ''"
                     />
                 </div>
                 <div>
@@ -234,7 +286,8 @@ const copyToClipboard = async () => {
                         required
                         type="email"
                         v-model="form.email"
-                        :error="form.errors.email"
+                        :error="form.errors.email || emailExistsError"
+                        @input="emailExistsError = ''"
                     />
                 </div>
                 <div>
