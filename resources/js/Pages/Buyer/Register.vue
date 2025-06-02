@@ -21,7 +21,6 @@ const projects = usePage().props.projects.map(item => ({
    id: item.project_code,
    name: item.name
 }));
-console.log(projects);
 const form = useForm({
     contact_reference_code: '',
     project_code: '',
@@ -46,9 +45,6 @@ const showQRCode = ref(false);
 const mobileExistsError =ref('');
 const emailExistsError = ref('');
 
-// const toggleTC = () => {
-//     showTC.value = !showTC.value
-// }
 
 const togglePP = () => {
     showAgreementPage.value = !showAgreementPage.value
