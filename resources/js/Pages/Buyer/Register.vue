@@ -4,21 +4,25 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import GradientStyleInput from '@/Components/Inputs/GradientStyleInput.vue';
 import GradientStylePhoneNumber from '@/Components/Inputs/GradientStylePhoneNumber.vue';
 import GradientSelectCombobox from '@/Components/Inputs/GradientSelectCombobox.vue';
+import DefaultModal from '@/Components/DefaultModal.vue';
 import { Head, usePage ,useForm, Link, router} from '@inertiajs/vue3';
 import Agreements from '@/Components/Agreements.vue';
 import { ref } from "vue";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import QRCode from 'qrcode';
+
 
 const props = defineProps({
     projects: Array,
 });
+
 const user = usePage().props.auth.user;
+const seller_name = user.name
 const projects = usePage().props.projects.map(item => ({
    id: item.project_code,
    name: item.name
 }));
-console.log(projects);
 const form = useForm({
     contact_reference_code: '',
     project_code: '',
@@ -36,28 +40,44 @@ const form = useForm({
 const showTC = ref(false)
 const coboChecked = ref(false);
 const showAgreementPage = ref(false)
-const disclaimerChecked = ref(false)
-;
-const toggleTC = () => {
-    showTC.value = !showTC.value
-}
+const disclaimerChecked = ref(false);
+const matchLink = ref('');
+const qrCodeDataUrl = ref('');
+const showQRCode = ref(false);
+const mobileExistsError =ref('');
+const emailExistsError = ref('');
+const sentSMS= ref(false);
+const sentEmail= ref(false);
+
+
 
 const togglePP = () => {
     showAgreementPage.value = !showAgreementPage.value
-}
+};
 
 // console.log(form)
 const viewAgreements = () => {
     disclaimerChecked.value = false
     togglePP()
-}
+};
 const addCoborrower = () => {
     coboChecked.value = true
     // togglePP()
-}
+};
+const closeModal = () => {
+    // showQRCode.value = false;
+    window.location.href = '/dashboard';
+};
 const submit = async () => {
-console.log(JSON.stringify(form.data()))
-    try {
+    // console.log(JSON.stringify(form.data()))
+
+        const mobileExists = await checkMobileExists(form.mobile);
+        const emailExists = await checkEmailExists(form.email);
+
+        if (mobileExists || emailExists) {
+            return; 
+        }
+        try {
         const response = await fetch('https://contracts-staging.homeful.ph/api/register-and-point-to-match', {
             method: 'POST',
             headers: {
@@ -68,14 +88,13 @@ console.log(JSON.stringify(form.data()))
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            console.error('Error:', errorData);
+            const errorData = await response.json()
             alert('Submission failed.');
             return;
         }
 
         const result = await response.json();
-        console.log('Success:', result['homeful_id']);
+
         // form.post(route('voucher.store'))"
         // transaction_code => 'JN-TYUARP', 
      
@@ -103,10 +122,10 @@ console.log(JSON.stringify(form.data()))
             contact_reference_code: result['homeful_id'],
             project_code: form.project_code 
         };
-        console.log(res_arr);
+        // console.log(res_arr);
         //addedd
         try {
-        console.log(res_arr);
+        // console.log(res_arr);
         const res_voucher = await fetch(route('api.voucher.generate'), {
             method: 'POST',
             headers: {
@@ -116,8 +135,8 @@ console.log(JSON.stringify(form.data()))
             body: JSON.stringify(res_arr),
         });
         const res_vouchers = await res_voucher.json(); 
-        console.log(res_vouchers['voucher']);
-        console.log(result['match_link']+"&voucher="+res_vouchers['voucher'])
+        // console.log(res_vouchers['voucher']);
+        // console.log(result['match_link']+"&voucher="+res_vouchers['voucher'])
         
         const res_update = await fetch(route('api.buyer.update'), {
             method: 'POST',
@@ -127,12 +146,21 @@ console.log(JSON.stringify(form.data()))
             },
             body: JSON.stringify({
                 contact_reference_code: result['homeful_id'],
-                match_link: result['match_link']+"&voucher="+res_vouchers['voucher']
+                match_link: result['match_link']+"&voucher="+res_vouchers['voucher']+"&project_code="+form.project_code
             }),
         });
-        console.log(res_update);
+        // console.log(res_update);
+        matchLink.value = result['match_link'] + "&voucher=" + res_vouchers['voucher']+"&project_code="+form.project_code;
+        QRCode.toDataURL(matchLink.value)
+        .then(url => {
+            qrCodeDataUrl.value = url;
+            showQRCode.value = true;
+        })
+        .catch(err => {
+            console.error('QR Code generation failed:', err);
+        });
         alert('Registration successful!');
-        window.location.href = '/dashboard';
+        // window.location.href = '/dashboard';
         } catch (error) {
             console.error('Network or server error:', error);
             alert('An error occurred during submission.');
@@ -143,7 +171,110 @@ console.log(JSON.stringify(form.data()))
         alert('An error occurred during submission.');
     }
 };
+const copyToClipboard = async () => {
+    try {
+        await navigator.clipboard.writeText(matchLink.value);
+        alert('Link copied to clipboard!');
+    } catch (err) {
+        console.error('Failed to copy:', err);
+        alert('Failed to copy link.');
+    }
+};
+const sendSMS = async() => {
+    const smsBody = {
+    "mobile":"63" + form.mobile.substring(1),
+    "message":"Hi Mr/Mrs/Ms "+ form.first_name + " Please complete your booking with " + seller_name + " with link below: " + matchLink.value + " Thank you!"  
+    }
+    console.log(smsBody);
+    try{
+    const response = await fetch(route('api.sendSMS'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(smsBody),
+        });
+        alert('Link sent to SMS');
+        sentSMS.value = true;
+    console.log(response.json());
+    }
+    catch(e){
+        console.log(e);
+    }
+};
+const sendEmail = async() => {
+    let emailBody = {
+    "template":"buyerTemplate",
+    "recipient":form.email?form.email:"ggvivar@joy-nostalg.com",
+    "mailBody":{
+    "subject":"Welcome Buyer!",
+    "first_name":form.first_name?form.first_name:'N/A',
+    "seller_name":seller_name?seller_name:"N/A",
+    "matchlink":matchLink.value?matchLink.value:"N/A"
+    }
+    }
+    console.log(emailBody);
+    try{
+    const response = await fetch(route('api.sendEmail'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(emailBody),
+        });
+        alert('Link sent to Email');
+        sentEmail.value = true;
+    console.log(response.json());
+    }
+    catch(e){
+        console.log(e);
+    }
+};
+const checkMobileExists = async (mobile) => {
+    try {
+        const  $url = 'https://contacts-staging.homeful.ph/api/validate/mobile/' + mobile;
+        const response = await fetch($url, { 
+            method: 'GET',
+        });
+        const data = await response.json();
+        if (data.exists) {
+            mobileExistsError.value = 'This mobile number is already used.';
+            return true;
+        } else {
+            mobileExistsError.value = '';
+            return false;
+        }
+    } catch (error) {
+        console.error('Error checking mobile:', error);
+        mobileExistsError.value = '';
+        return false;
+    }
+};
+const checkEmailExists = async (email) => {
+    try {
+        console.log(email);
+        const  $url = 'https://contacts-staging.homeful.ph/api/validate/email/' + email;
+        const response = await fetch($url, { 
+            method: 'GET',
+        });
 
+        const data = await response.json();
+
+        if (data.exists) {
+            emailExistsError.value = 'This email is already used.';
+            return true;
+        } else {
+            emailExistsError.value = '';
+            return false;
+        }
+    } catch (error) {
+        console.error('Error checking mobile:', error);
+        emailExistsError.value = '';
+        return false;
+    }
+};
 </script>
 
 <template>
@@ -197,7 +328,8 @@ console.log(JSON.stringify(form.data()))
                         placeholder="+63 XXX XXXX XXX"
                         required
                         v-model="form.mobile"
-                        :error="form.errors.mobile"
+                        :error="form.errors.mobile || mobileExistsError"
+                        @input="mobileExistsError = ''"
                     />
                 </div>
                 <div>
@@ -207,7 +339,8 @@ console.log(JSON.stringify(form.data()))
                         required
                         type="email"
                         v-model="form.email"
-                        :error="form.errors.email"
+                        :error="form.errors.email || emailExistsError"
+                        @input="emailExistsError = ''"
                     />
                 </div>
                 <div>
@@ -218,9 +351,9 @@ console.log(JSON.stringify(form.data()))
                             v-model="form.date_of_birth"
                             :error="form.errors.date_of_birth"
                         />
-                        </div>
-                        <div>
-                        <GradientStyleInput
+                    </div>
+                    <div>
+                    <GradientStyleInput
                             label="Gross Monthly Income"
                             type="number"
                             placeholder="Enter Gross Monthly Income"
@@ -270,20 +403,13 @@ console.log(JSON.stringify(form.data()))
                 <div class="mt-3 ">
                     <div class="flex items-center mb-4 gap-2" @click="viewAgreements">
                         <input type="checkbox"  @click="viewAgreements" v-model="disclaimerChecked" id="default-checkbox" class="w-5 h-5 text-[#F7C947] rounded-sm focus:ring-[#E94572]" style=" border-radius:25%;">
-                         <!-- <div v-if="disclaimerChecked" class="w-6 h-5 bg-[#F7C947] rounded border-2 border-black">
-                            <svg class="w-full h-full text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 11.917 9.724 16.5 19 7.5"/>
-                            </svg>
-                         </div>
-                         <div v-else class="w-[25px] h-[20px] rounded border-2 border-black">
-                         </div> -->
+
                         <label class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                             I've read and agree with the <b class="underline cursor-pointer">Terms of Use</b> and the <b class="underline cursor-pointer">Privacy Policy</b>.
                         </label>
                     </div>
                     <div class="mt-3">
                     <!-- <PlainBlackButton type="submit" :disabled="!disclaimerChecked"> -->
-
                     <div class="container pt-3">
                     <button
                         class="text-sm text-center text-white bg-black fw-bold"
@@ -306,6 +432,63 @@ console.log(JSON.stringify(form.data()))
                 @close="togglePP"
                 v-model:disclaimerChecked="disclaimerChecked"
             />
+            <DefaultModal v-if="matchLink" @close="closeModal">
+                <!-- <DefaultModal @close="closeModal"> -->
+                <div class="p-6 text-center">
+                    <h2 class="text-lg font-medium text-gray-900 mb-4">
+                        Registration Successful!
+                    </h2>
+                    <div class="flex justify-center mb-4">
+                        <img :src="qrCodeDataUrl" alt="QR Code" class="w-48 h-48" />
+                    </div>
+                    <hr>
+                    <p class="text-sm text-gray-600 mb-4">
+                        Scan the QR code below <br>
+                        or <br>
+                        Send Booking Link via:
+                    </p>
+                    <div class="flex flex-col items-center space-y-2">
+                        <input
+                            type="text"
+                            :value="matchLink"
+                            readonly
+                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+                        />
+                        <div class ="d-block mt-3"> 
+                        <button
+                            @click="sendSMS"
+                            class="btn btn-primary px-2 py-1 mx-1 text-white rounded"
+                            :disabled="sentSMS"
+                        >
+                        <i class="bi bi-chat-text"></i> SMS
+                        </button>
+                        <button
+                            @click="sendEmail"
+                            class="btn btn-primary px-2 py-1 mx-1 text-white rounded"
+                            :disabled="sentEmail"
+                        >
+                        
+                        <i class="bi bi-envelope"></i> Email
+                        </button>
+                        <button
+                            @click="copyToClipboard"
+                            class="btn btn-primary px-2 py-1 mx-1 text-white"
+                        >
+                        <i class="bi bi-copy"></i>Copy
+                        </button>
+                     </div>
+                    </div>
+                    <div class="mt-6">
+                        <button
+                            class="text-sm font-medium text-white bg-gray-800 px-4 py-2 rounded"
+                            @click="closeModal"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </DefaultModal>
+
         </div>
             </div>
         </div>

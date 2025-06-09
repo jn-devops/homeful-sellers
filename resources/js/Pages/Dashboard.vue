@@ -10,35 +10,15 @@ const props = defineProps({
 //   projects: Object,
   buyers:Object
 });
-console.log()
 const user = usePage().props.auth.user;
 const buyers = usePage().props.buyers.map(buyer => ({
     id: buyer.id, 
+    first_name: buyer.first_name,
     name: buyer.first_name + " " + buyer.last_name, 
     email: buyer.email, 
     mobile: buyer.mobile,
     match_link: buyer.other_mobile
 }));
-
-// const buyers = ref([
-//   { id: 1, name: 'Test 1', email: 'test1@example.com', mobile: '09123456789',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 2, name: 'Test 2', email: 'test2@example.com', mobile: '09987654321',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 3, name: 'Test 3', email: 'test3@example.com', mobile: '09051234567',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 4, name: 'Test 1', email: 'test1@example.com', mobile: '09123456789',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 5, name: 'Test 2', email: 'test2@example.com', mobile: '09987654321',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 6, name: 'Test 3', email: 'test3@example.com', mobile: '09051234567',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 7, name: 'Test 1', email: 'test1@example.com', mobile: '09123456789',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 8, name: 'Test 2', email: 'test2@example.com', mobile: '09987654321',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 9, name: 'Test 3', email: 'test3@example.com', mobile: '09051234567',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 10, name: 'Test 1', email: 'test1@example.com', mobile: '09123456789',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 11, name: 'Test 2', email: 'test2@example.com', mobile: '09987654321',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 12, name: 'Test 3', email: 'test3@example.com', mobile: '09051234567',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 13, name: 'Test 1', email: 'test1@example.com', mobile: '09123456789',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 14, name: 'Test 2', email: 'test2@example.com', mobile: '09987654321',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-//   { id: 15, name: 'Test 3', email: 'test3@example.com', mobile: '09051234567',"match_link": "https://contracts-staging.homeful.ph/avail/create?reference=JN-HLVHZP" },
-  
-// ]);
-
 const showModal = ref(false);
 const selectedBuyer = ref({});
 const hoveredBuyer = ref(null);
@@ -58,7 +38,59 @@ async function openQRModal(link) {
     console.error('QR Code generation failed', err);
   }
 }
-
+const sendSMS = async(buyer) => {
+    const smsBody = {
+    "mobile":"63" + buyer['mobile'].substring(1),
+    "message":"Hi Mr/Mrs/Ms "+ buyer['first_name'] + " Please complete your booking with " + user.name + " with link below: " + buyer['match_link'] + " Thank you!"  
+    }
+    // console.log(smsBody);
+    try{
+    const response = await fetch(route('api.sendSMS'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(smsBody),
+        });
+        // alert('Link sent to SMS');
+        alert(buyer['name'] + ' booking link sent thru SMS');
+        // sentSMS.value = true;
+    // console.log(response.json());
+    }
+    catch(e){
+        console.log(e);
+    }
+};
+const sendEmail = async(buyer) => {
+    let emailBody = {
+    "template":"buyerTemplate",
+    "recipient":buyer['email']?buyer['email']:"ggvivar@joy-nostalg.com",
+    "mailBody":{
+    "subject":"Welcome Buyer!",
+    "first_name":buyer['first_name']?buyer['first_name']:'N/A',
+    "seller_name":user.name?user.name:"N/A",
+    "matchlink":buyer['match_link']?buyer['match_link']:"N/A"
+    }
+    }
+    // console.log(emailBody);
+    try{
+    const response = await fetch(route('api.sendEmail'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(emailBody),
+        });
+        alert(buyer['name'] + ' booking link sent thru email');
+        // sentEmail.value = true;
+    console.log(response.json());
+    }
+    catch(e){
+        console.log(e);
+    }
+};
 function closeQRModal() {
   showQRModal.value = false;
   qrImage.value = '';
@@ -85,7 +117,7 @@ function copyToClipboard(text) {
         <div class="w-full sm:w-full md:w-[500px]">
           <h2 class="text-xl font-bold">{{ user.name }}</h2>
           <h5 class="text-sm font-semibold">
-            Seller Code:
+            Seller Booking Code:
             <span class="text-[#C38400]">{{ user.seller_commission_code }}</span>
           </h5>
         </div>
@@ -124,7 +156,7 @@ function copyToClipboard(text) {
               <p class="mb-0"><strong>Mobile:</strong> {{ buyer.mobile }}</p>
             </div>
           </td>
-          <td>
+          <td class="text-end">
             <a
                 href="#"
                 style="text-decoration: none; color:black"
@@ -132,6 +164,24 @@ function copyToClipboard(text) {
             >
                 View <i class="bi bi-qr-code"></i>
             </a>
+            <a  class="mx-2"
+                href="#"
+                style="text-decoration: none; color:black"
+                @click.prevent="sendEmail(buyer)"
+            >
+                <!-- EMAIL   <i class="bi bi-envelope"></i><br> -->
+                 <i class="bi bi-envelope"></i>
+            </a>
+            <a
+                href="#"
+                style="text-decoration: none; color:black"
+                @click.prevent="sendSMS(buyer)"
+            >
+                <!-- SMS <i class="bi bi-send"></i> -->
+                <i class="bi bi-send"></i>
+            </a>
+          
+            
             </td>
         </tr>
       </tbody>
@@ -147,16 +197,16 @@ function copyToClipboard(text) {
         <button type="button" class="btn-close" @click="closeQRModal"></button>
       </div>
       <div class="modal-body text-center ">
-        <img v-if="qrImage" :src="qrImage" alt="QR Code" />
+        <img v-if="qrImage" class="d-block mx-auto"  :src="qrImage" alt="QR Code" />
         <p class="mt-3">
         <span>-------------or Copy the link------------</span><br>
-  <button 
-    class="btn btn-outline-primary btn-sm mt-3"
-    @click="copyToClipboard(qrLink)"
-  >
-    Copy Link
-  </button>
-</p>
+      <button 
+        class="btn btn-outline-primary btn-sm mt-3"
+        @click="copyToClipboard(qrLink)"
+      >
+        Copy Link
+      </button>
+    </p>
 
       </div>
       <div class="modal-footer">
@@ -173,7 +223,7 @@ function copyToClipboard(text) {
             class="text-sm text-center text-white bg-black fw-bold"
             style="width: 100%; height: 40px;"
         >
-            Register Buyer
+            Book Sales
         </button>
         <button
             class="mt-3 text-sm text-center text-white bg-secondary fw-bold"
