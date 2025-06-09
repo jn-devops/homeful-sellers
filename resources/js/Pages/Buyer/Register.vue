@@ -16,7 +16,9 @@ import QRCode from 'qrcode';
 const props = defineProps({
     projects: Array,
 });
+
 const user = usePage().props.auth.user;
+const seller_name = user.name
 const projects = usePage().props.projects.map(item => ({
    id: item.project_code,
    name: item.name
@@ -44,29 +46,32 @@ const qrCodeDataUrl = ref('');
 const showQRCode = ref(false);
 const mobileExistsError =ref('');
 const emailExistsError = ref('');
+const sentSMS= ref(false);
+const sentEmail= ref(false);
+
 
 
 const togglePP = () => {
     showAgreementPage.value = !showAgreementPage.value
-}
+};
 
 // console.log(form)
 const viewAgreements = () => {
     disclaimerChecked.value = false
     togglePP()
-}
+};
 const addCoborrower = () => {
     coboChecked.value = true
     // togglePP()
-}
+};
 const closeModal = () => {
-    showQRCode.value = false;
+    // showQRCode.value = false;
     window.location.href = '/dashboard';
 };
 const submit = async () => {
     // console.log(JSON.stringify(form.data()))
 
-        const mobileExists = await checkMobileExists("63" + form.mobile.substring(1));
+        const mobileExists = await checkMobileExists(form.mobile);
         const emailExists = await checkEmailExists(form.email);
 
         if (mobileExists || emailExists) {
@@ -141,11 +146,11 @@ const submit = async () => {
             },
             body: JSON.stringify({
                 contact_reference_code: result['homeful_id'],
-                match_link: result['match_link']+"&voucher="+res_vouchers['voucher']
+                match_link: result['match_link']+"&voucher="+res_vouchers['voucher']+"&project_code="+form.project_code
             }),
         });
         // console.log(res_update);
-        matchLink.value = result['match_link'] + "&voucher=" + res_vouchers['voucher'];
+        matchLink.value = result['match_link'] + "&voucher=" + res_vouchers['voucher']+"&project_code="+form.project_code;
         QRCode.toDataURL(matchLink.value)
         .then(url => {
             qrCodeDataUrl.value = url;
@@ -173,6 +178,58 @@ const copyToClipboard = async () => {
     } catch (err) {
         console.error('Failed to copy:', err);
         alert('Failed to copy link.');
+    }
+};
+const sendSMS = async() => {
+    const smsBody = {
+    "mobile":"63" + form.mobile.substring(1),
+    "message":"Hi Mr/Mrs/Ms "+ form.first_name + " Please complete your booking with " + seller_name + " with link below: " + matchLink.value + " Thank you!"  
+    }
+    console.log(smsBody);
+    try{
+    const response = await fetch(route('api.sendSMS'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(smsBody),
+        });
+        alert('Link sent to SMS');
+        sentSMS.value = true;
+    console.log(response.json());
+    }
+    catch(e){
+        console.log(e);
+    }
+};
+const sendEmail = async() => {
+    let emailBody = {
+    "template":"buyerTemplate",
+    "recipient":form.email?form.email:"ggvivar@joy-nostalg.com",
+    "mailBody":{
+    "subject":"Welcome Buyer!",
+    "first_name":form.first_name?form.first_name:'N/A',
+    "seller_name":seller_name?seller_name:"N/A",
+    "matchlink":matchLink.value?matchLink.value:"N/A"
+    }
+    }
+    console.log(emailBody);
+    try{
+    const response = await fetch(route('api.sendEmail'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(emailBody),
+        });
+        alert('Link sent to Email');
+        sentEmail.value = true;
+    console.log(response.json());
+    }
+    catch(e){
+        console.log(e);
     }
 };
 const checkMobileExists = async (mobile) => {
@@ -294,9 +351,9 @@ const checkEmailExists = async (email) => {
                             v-model="form.date_of_birth"
                             :error="form.errors.date_of_birth"
                         />
-                        </div>
-                        <div>
-                        <GradientStyleInput
+                    </div>
+                    <div>
+                    <GradientStyleInput
                             label="Gross Monthly Income"
                             type="number"
                             placeholder="Enter Gross Monthly Income"
@@ -375,17 +432,21 @@ const checkEmailExists = async (email) => {
                 @close="togglePP"
                 v-model:disclaimerChecked="disclaimerChecked"
             />
-            <DefaultModal v-if="showQRCode" @close="closeModal">
+            <DefaultModal v-if="matchLink" @close="closeModal">
+                <!-- <DefaultModal @close="closeModal"> -->
                 <div class="p-6 text-center">
                     <h2 class="text-lg font-medium text-gray-900 mb-4">
                         Registration Successful!
                     </h2>
-                    <p class="text-sm text-gray-600 mb-4">
-                        Scan the QR code below or copy the link:
-                    </p>
                     <div class="flex justify-center mb-4">
                         <img :src="qrCodeDataUrl" alt="QR Code" class="w-48 h-48" />
                     </div>
+                    <hr>
+                    <p class="text-sm text-gray-600 mb-4">
+                        Scan the QR code below <br>
+                        or <br>
+                        Send Booking Link via:
+                    </p>
                     <div class="flex flex-col items-center space-y-2">
                         <input
                             type="text"
@@ -393,12 +454,29 @@ const checkEmailExists = async (email) => {
                             readonly
                             class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
                         />
+                        <div class ="d-block mt-3"> 
+                        <button
+                            @click="sendSMS"
+                            class="btn btn-primary px-2 py-1 mx-1 text-white rounded"
+                            :disabled="sentSMS"
+                        >
+                        <i class="bi bi-chat-text"></i> SMS
+                        </button>
+                        <button
+                            @click="sendEmail"
+                            class="btn btn-primary px-2 py-1 mx-1 text-white rounded"
+                            :disabled="sentEmail"
+                        >
+                        
+                        <i class="bi bi-envelope"></i> Email
+                        </button>
                         <button
                             @click="copyToClipboard"
-                            class="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+                            class="btn btn-primary px-2 py-1 mx-1 text-white"
                         >
-                            Copy Link
+                        <i class="bi bi-copy"></i>Copy
                         </button>
+                     </div>
                     </div>
                     <div class="mt-6">
                         <button

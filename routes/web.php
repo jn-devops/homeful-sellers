@@ -43,5 +43,4 @@ Route::post('voucher/generate', [VoucherController::class,'generateVoucher'])->m
 Route::resource('voucher', VoucherController::class)->middleware(['auth', 'verified'])->only(['create', 'store']);
 Route::resource('projects', ProjectController::class);
 Route::resource('sync-projects', SyncProjectsController::class)->only(['create', 'store']);
-
 require __DIR__.'/auth.php';

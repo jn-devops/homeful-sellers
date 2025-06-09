@@ -12,12 +12,13 @@ class RedeemController extends Controller
 {
     public function __invoke(Reference $voucher, Project|string $project = null): array|false
     {
+
+        // dd($project);
         $project = Project::where('code',$project)->first();
         RedeemVoucherCode::run($voucher,[
             "project"=>$project->toArray(),
             "project_code"=>$project->code
         ]);
-
         $voucher->refresh();
         $voucher->save();
 
@@ -33,4 +34,5 @@ class RedeemController extends Controller
             : false
             ;
     }
+   
 }

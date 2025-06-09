@@ -25,7 +25,7 @@ class GenerateVoucherCodev2
         // $project_code ="Pasinaya Homes Magalang Pampanga";
         $project = $project_code instanceof Project
             ? $project_code
-            : Project::where('name', $project_code)->first();
+            : Project::where('code', $project_code)->first();//change to name to code
         // $seller_commission_code = GetSellerCommissionCode::run($user, $project);
         $seller_commission_code = $user['seller_commission_code'];
         // return  $contact_reference_code ;

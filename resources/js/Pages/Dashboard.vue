@@ -10,7 +10,6 @@ const props = defineProps({
 //   projects: Object,
   buyers:Object
 });
-console.log()
 const user = usePage().props.auth.user;
 const buyers = usePage().props.buyers.map(buyer => ({
     id: buyer.id, 
@@ -38,7 +37,58 @@ async function openQRModal(link) {
     console.error('QR Code generation failed', err);
   }
 }
-
+const sendSMS = async() => {
+    const smsBody = {
+    "mobile":"63" + form.mobile.substring(1),
+    "message":"Hi Mr/Mrs/Ms "+ form.first_name + " Please complete your booking with " + seller_name + " with link below: " + matchLink.value + " Thank you!"  
+    }
+    console.log(smsBody);
+    // try{
+    // const response = await fetch(route('api.sendSMS'), {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'Accept': 'application/json'
+    //         },
+    //         body: JSON.stringify(smsBody),
+    //     });
+    //     alert('Link sent to SMS');
+    //     sentSMS.value = true;
+    // console.log(response.json());
+    // }
+    // catch(e){
+    //     console.log(e);
+    // }
+};
+const sendEmail = async() => {
+    let emailBody = {
+    "template":"buyerTemplate",
+    "recipient":form.email?form.email:"ggvivar@joy-nostalg.com",
+    "mailBody":{
+    "subject":"Welcome Buyer!",
+    "first_name":form.first_name?form.first_name:'N/A',
+    "seller_name":seller_name?seller_name:"N/A",
+    "matchlink":matchLink.value?matchLink.value:"N/A"
+    }
+    }
+    console.log(emailBody);
+    try{
+    const response = await fetch(route('api.sendEmail'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(emailBody),
+        });
+        alert('Link sent to Email');
+        sentEmail.value = true;
+    console.log(response.json());
+    }
+    catch(e){
+        console.log(e);
+    }
+};
 function closeQRModal() {
   showQRModal.value = false;
   qrImage.value = '';
@@ -104,7 +154,7 @@ function copyToClipboard(text) {
               <p class="mb-0"><strong>Mobile:</strong> {{ buyer.mobile }}</p>
             </div>
           </td>
-          <td>
+          <td class="text-end">
             <a
                 href="#"
                 style="text-decoration: none; color:black"
@@ -112,6 +162,24 @@ function copyToClipboard(text) {
             >
                 View <i class="bi bi-qr-code"></i>
             </a>
+            <a  class="mx-2"
+                href="#"
+                style="text-decoration: none; color:black"
+                @click.prevent="sendEmail(buyer)"
+            >
+                <!-- EMAIL   <i class="bi bi-envelope"></i><br> -->
+                 <i class="bi bi-envelope"></i>
+            </a>
+            <a
+                href="#"
+                style="text-decoration: none; color:black"
+                @click.prevent="sendSMS()"
+            >
+                <!-- SMS <i class="bi bi-send"></i> -->
+                <i class="bi bi-send"></i>
+            </a>
+          
+            
             </td>
         </tr>
       </tbody>
