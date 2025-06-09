@@ -13,6 +13,7 @@ const props = defineProps({
 const user = usePage().props.auth.user;
 const buyers = usePage().props.buyers.map(buyer => ({
     id: buyer.id, 
+    first_name: buyer.first_name,
     name: buyer.first_name + " " + buyer.last_name, 
     email: buyer.email, 
     mobile: buyer.mobile,
@@ -37,41 +38,42 @@ async function openQRModal(link) {
     console.error('QR Code generation failed', err);
   }
 }
-const sendSMS = async() => {
+const sendSMS = async(buyer) => {
     const smsBody = {
-    "mobile":"63" + form.mobile.substring(1),
-    "message":"Hi Mr/Mrs/Ms "+ form.first_name + " Please complete your booking with " + seller_name + " with link below: " + matchLink.value + " Thank you!"  
+    "mobile":"63" + buyer['mobile'].substring(1),
+    "message":"Hi Mr/Mrs/Ms "+ buyer['first_name'] + " Please complete your booking with " + user.name + " with link below: " + buyer['match_link'] + " Thank you!"  
     }
-    console.log(smsBody);
-    // try{
-    // const response = await fetch(route('api.sendSMS'), {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'Accept': 'application/json'
-    //         },
-    //         body: JSON.stringify(smsBody),
-    //     });
-    //     alert('Link sent to SMS');
-    //     sentSMS.value = true;
+    // console.log(smsBody);
+    try{
+    const response = await fetch(route('api.sendSMS'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(smsBody),
+        });
+        // alert('Link sent to SMS');
+        alert(buyer['name'] + ' booking link sent thru SMS');
+        // sentSMS.value = true;
     // console.log(response.json());
-    // }
-    // catch(e){
-    //     console.log(e);
-    // }
+    }
+    catch(e){
+        console.log(e);
+    }
 };
-const sendEmail = async() => {
+const sendEmail = async(buyer) => {
     let emailBody = {
     "template":"buyerTemplate",
-    "recipient":form.email?form.email:"ggvivar@joy-nostalg.com",
+    "recipient":buyer['email']?buyer['email']:"ggvivar@joy-nostalg.com",
     "mailBody":{
     "subject":"Welcome Buyer!",
-    "first_name":form.first_name?form.first_name:'N/A',
-    "seller_name":seller_name?seller_name:"N/A",
-    "matchlink":matchLink.value?matchLink.value:"N/A"
+    "first_name":buyer['first_name']?buyer['first_name']:'N/A',
+    "seller_name":user.name?user.name:"N/A",
+    "matchlink":buyer['match_link']?buyer['match_link']:"N/A"
     }
     }
-    console.log(emailBody);
+    // console.log(emailBody);
     try{
     const response = await fetch(route('api.sendEmail'), {
             method: 'POST',
@@ -81,8 +83,8 @@ const sendEmail = async() => {
             },
             body: JSON.stringify(emailBody),
         });
-        alert('Link sent to Email');
-        sentEmail.value = true;
+        alert(buyer['name'] + ' booking link sent thru email');
+        // sentEmail.value = true;
     console.log(response.json());
     }
     catch(e){
@@ -173,7 +175,7 @@ function copyToClipboard(text) {
             <a
                 href="#"
                 style="text-decoration: none; color:black"
-                @click.prevent="sendSMS()"
+                @click.prevent="sendSMS(buyer)"
             >
                 <!-- SMS <i class="bi bi-send"></i> -->
                 <i class="bi bi-send"></i>
