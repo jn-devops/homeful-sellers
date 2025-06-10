@@ -8,5 +8,10 @@ return [
     ],
     'keys'=>[
         'contact_key' =>env('CONTACT_API_KEY')
+    ],
+    'engagespark' => [
+        'org_id' => env('ENGAGESPARK_ORGANIZATION_ID', ''),
+        'sender_id' => env('ENGAGESPARK_SENDER_ID', ''),
+        'api_key' => env('ENGAGESPARK_API_KEY', ''),
     ]
 ];
