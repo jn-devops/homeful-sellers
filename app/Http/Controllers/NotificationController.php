@@ -28,7 +28,7 @@ class NotificationController extends Controller
             "ENGAGESPARK_SENDER_ID"=>$request->header("x-sms-sender-id"),
             "ENGAGESPARK_API_KEY"=>$request->header("x-sms-api")
         ];
-        dd($credential['ENGAGESPARK_ORGANIZATION_ID']);
+        // dd($credential['ENGAGESPARK_ORGANIZATION_ID']);
        
         // return [$recipient];
 
