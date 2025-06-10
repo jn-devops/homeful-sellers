@@ -28,15 +28,13 @@
             class="w-full border border-gray-300 rounded-md px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-black"
             required
           />
-          <div class="absolute inset-y-0 right-3 flex items-center cursor-pointer" @click="togglePassword">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-4.477-10-10S6.477 1 12 1c5.523 0 10 4.477 10 10 0 1.247-.228 2.442-.646 3.534M15 15l5 5m0 0l-5-5m5 5V19a2 2 0 00-2-2h-4" />
-            </svg>
+          <div class="fs-3 absolute inset-y-0 pt-4 right-3 flex items-center cursor-pointer" @click="togglePassword">
+            <i :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
           </div>
         </div>
 
         <div class="text-right">
-          <a href="#" class="text-sm text-blue-600 hover:underline">Forgot password?</a>
+          <a href="/forgot-password" class="text-sm text-blue-600 text-decoration-none">Forgot password?</a>
         </div>
 
         <button 
@@ -51,8 +49,15 @@
 </template>
 
 <script setup>
-
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { ref } from 'vue';
+
+const showPassword = ref(false);
+const togglePassword = () => {
+  showPassword.value = !showPassword.value;
+};
 defineProps({
     canResetPassword: {
         type: Boolean,
@@ -74,6 +79,8 @@ const submit = () => {
         onFinish: () => form.reset('password'),
     });
 };
+//
+
 </script>
 
 <style scoped>
