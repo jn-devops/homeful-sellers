@@ -23,25 +23,26 @@ class NotificationController extends Controller
     public function send_sms(Request $request){
         $recipient = $request->mobile;
         $message = $request->message;
+        // dd(config("homeful-sellers.engagespark"));
         $credential = [
-            "ENGAGESPARK_ORGANIZATION_ID"=>$request->header("x-sms-org-id"),
-            "ENGAGESPARK_SENDER_ID"=>$request->header("x-sms-sender-id"),
-            "ENGAGESPARK_API_KEY"=>$request->header("x-sms-api")
+            "ENGAGESPARK_ORGANIZATION_ID"=>$request->header("x-sms-org-id")?$request->header("x-sms-org-id"):config("homeful-sellers.engagespark.org_id"),
+            "ENGAGESPARK_SENDER_ID"=>$request->header("x-sms-sender-id")?$request->header("x-sms-sender-id"):config("homeful-sellers.engagespark.sender_id"),
+            "ENGAGESPARK_API_KEY"=>$request->header("x-sms-api")?$request->header("x-sms-api"):config("homeful-sellers.engagespark.api_key")
         ];
         // dd($credential['ENGAGESPARK_ORGANIZATION_ID']);
        
         // return [$recipient];
 
         $apiUrl = 'https://api.engagespark.com/v1/sms/contact';
-        $apiKey = $credential['ENGAGESPARK_API_KEY']?$credential['ENGAGESPARK_API_KEY']:env('ENGAGESPARK_API_KEY');
+        $apiKey = $credential['ENGAGESPARK_API_KEY'];
 
         $response = Http::withHeaders([
             'Authorization' => 'Token ' . $apiKey,
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
         ])->post($apiUrl, [
-            'orgId' => $credential['ENGAGESPARK_ORGANIZATION_ID']?$credential['ENGAGESPARK_ORGANIZATION_ID']:env('ENGAGESPARK_ORGANIZATION_ID', ''),
-            'from' =>  $credential['ENGAGESPARK_SENDER_ID']?$credential['ENGAGESPARK_SENDER_ID']:env('ENGAGESPARK_SENDER_ID', ''),
+            'orgId' => $credential['ENGAGESPARK_ORGANIZATION_ID'],
+            'from' =>  $credential['ENGAGESPARK_SENDER_ID'],
             'message' => $message,
             'fullPhoneNumber' => $recipient,
             'to'=>$recipient,
