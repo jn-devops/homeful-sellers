@@ -17,9 +17,7 @@ import {useForm, usePage, Link} from '@inertiajs/vue3';
                 </div> -->
                 <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div class="flex shrink-0 items-center cursor-pointer">
-                    <Link :href="route('dashboard')" >
-                        <img class="h-7 w-auto" :src="usePage().props.data.appURL+'/images/default_logo.svg'" />
-                    </Link>
+                    Seller Booking App
                 </div>
                 <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
                     <!-- Current: "border-[#C38400] text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
