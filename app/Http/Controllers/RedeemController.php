@@ -10,10 +10,35 @@ use App\Actions\RedeemVoucherCode;
 
 class RedeemController extends Controller
 {
-    public function __invoke(Reference $voucher, Project|string $project = null): array|false
+    public function validated_voucher($voucher)
     {
+        $voucher = Reference::where('code',$voucher)->first();
+        if($voucher)
+        {
+            $user = User::where('id',$voucher['owner_id'])->first();
+            return  [
+                    'seller_commission_code' => $user->meta->seller_commission_code,
+                    ];
+        }
+        else{
+            return  ['message' => "voucher is not existing or expired"];
+        }
+    }
+    public function redeem($voucher)
+    {
+        $voucher = Reference::where('code',$voucher)->first();
+        if($voucher)
+        {
+            $user = User::where('id',$voucher['owner_id'])->first();
+            dd($user);
+            return  [
+                    'seller_commission_code' => $user->meta->seller_commission_code,
+                    ];
+        }
+        else{
+            return  ['message' => "voucher is not existing or expired"];
+        }
 
-        // dd($project);
         $project = Project::where('code',$project)->first();
         RedeemVoucherCode::run($voucher,[
             "project"=>$project->toArray(),
@@ -27,12 +52,9 @@ class RedeemController extends Controller
         $seller_commission_code = $user instanceof User
             ? GetSellerCommissionCode::run($user, $project)
             : null;
-
-
         return $voucher->isRedeemed()
             ? ['seller_commission_code' => $seller_commission_code]
             : false
             ;
     }
-   
 }

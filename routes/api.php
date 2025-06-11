@@ -14,7 +14,10 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 Route::post('voucher/generate', [VoucherController::class,'generateVoucher'])->name('api.voucher.generate');
-Route::post('redeem/{voucher}/{project?}', RedeemController::class)->name('redeem');
+// Route::post('redeem/{voucher}/{project?}', RedeemController::class)->name('redeem');
+// Route::get('redeem/{voucher}', [RedeemController::class,'validated_voucher'])->name('validated_voucher');
+Route::post('redeem/{voucher}', [RedeemController::class,'validated_voucher'])->name('redeem');
+
 Route::post('buyer/update', [BuyerController::class, 'updateBuyer'])->name('api.buyer.update');
 
 Route::post('notification/send-email', [NotificationController::class, 'send_email'])->name('api.sendEmail');
