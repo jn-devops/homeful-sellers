@@ -17,11 +17,14 @@ class RedeemController extends Controller
         {
             $user = User::where('id',$voucher['owner_id'])->first();
             return  [
-                    'seller_commission_code' => $user->meta->seller_commission_code,
-                    ];
+                'message' => "Success",
+                'seller_commission_code' => $user->meta->seller_commission_code,
+                ];
         }
         else{
-            return  ['message' => "voucher is not existing or expired"];
+            return  [
+                'message' => "voucher is not existing or expired",
+                'seller_commission_code' => null];
         }
     }
     public function redeem($voucher)
@@ -30,13 +33,16 @@ class RedeemController extends Controller
         if($voucher)
         {
             $user = User::where('id',$voucher['owner_id'])->first();
-            dd($user);
+            // dd($user);
             return  [
+                    'message' => "Success",
                     'seller_commission_code' => $user->meta->seller_commission_code,
                     ];
         }
         else{
-            return  ['message' => "voucher is not existing or expired"];
+            return  [
+                    'message' => "voucher is not existing or expired",
+                    'seller_commission_code' => null];
         }
 
         $project = Project::where('code',$project)->first();

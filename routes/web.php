@@ -18,7 +18,8 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     $user = Auth::user();
     $buyers = Contact::where('landline',  $user->email."/".$user->meta->seller_commission_code)
-    // ->where('seller_commission_code',  $seller_comm_code)
+    ->where('current_status', NULL)
+    ->orderByDesc('created_at')
     ->get();
     // dd($buyers);
     // $buyers = Contact::all();
