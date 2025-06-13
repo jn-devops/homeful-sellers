@@ -70,8 +70,8 @@ const showPassword = computed(() => props.autoPassword === '');
                 </div>
                 <div class="w-full mt-5">
                     <TextInput
-                        placeholder="Seller Commission Code"
-                        label="Seller Code"
+                        placeholder="Seller Booking Code"
+                        label="Seller Booking Code"
                         required
                         no-border-radius
                         v-model="form.seller_commission_code"

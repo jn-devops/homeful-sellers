@@ -28,9 +28,6 @@ const form = useForm({
                 Seller Profile
             </h2>
 
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Update your account's sales information.
-            </p>
         </header>
 
         <form
@@ -38,8 +35,7 @@ const form = useForm({
             class="mt-6 space-y-6"
         >
             <div>
-                <InputLabel for="seller_commission_code" value="Default Seller Commission Code" />
-
+                <InputLabel for="seller_commission_code" value="Seller Commission Code" />
                 <TextInput
                     id="seller_commission_code"
                     type="text"
@@ -47,12 +43,13 @@ const form = useForm({
                     v-model="form.seller_commission_code"
                     required
                     autofocus
+                    disabled
                 />
 
                 <InputError class="mt-2" :message="form.errors.seller_commission_code" />
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4 hidden">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
 
                 <Transition

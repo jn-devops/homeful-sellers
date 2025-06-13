@@ -12,7 +12,7 @@ const showingNavigationDropdown = ref(false);
 </script>
 
 <template>
-    <div>
+    <div class="pt-16">
         <DefaultNavigation />
         <slot name="header" />
         <slot />

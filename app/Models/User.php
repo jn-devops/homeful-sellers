@@ -10,6 +10,7 @@ use Homeful\Properties\Models\Project;
 use Homeful\Contacts\Models\Contact;
 use App\Traits\HasSellerAttributes;
 use Homeful\Common\Traits\HasMeta;
+use Laravel\Sanctum\HasApiTokens;
 
 /**
  * Class User
@@ -26,6 +27,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
     use HasSellerAttributes;
     use HasMeta;
+    use HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -36,7 +38,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'seller_commission_code'
+        'seller_id', //added ggvivar 05/22/2025
+        'seller_commission_code',
     ];
 
     /**

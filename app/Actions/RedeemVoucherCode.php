@@ -6,6 +6,7 @@ use Homeful\References\Facades\References;
 use Lorisleiva\Actions\Concerns\AsAction;
 use Illuminate\Support\Facades\Validator;
 use Homeful\References\Models\Reference;
+use Homeful\Properties\Models\Project;
 
 class RedeemVoucherCode
 {
@@ -15,14 +16,17 @@ class RedeemVoucherCode
     {
         $voucher_code = $reference->code;
         $user = $reference->owner;
-
+        $project = Project::where('code',$meta['project_code'])->first();
+        $meta=[
+            "project"=>$project->toArray(),
+            "project_code"=>$project->code
+        ];
         return References::redeem($voucher_code, $user, $meta);
     }
 
     public function handle(Reference $reference, ?array $attribs = []): bool
     {
         $validated = Validator::validate($attribs, $this->rules());
-
         return $this->redeem($reference, $validated);
     }
 

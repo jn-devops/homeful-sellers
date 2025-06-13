@@ -61,14 +61,53 @@ watch (
     },
     { immediate: true }
 );
+const submit = async () => {
+console.log(JSON.stringify(form.data()))
+    try {
+        const res_arr = {
+            user:user,
+            contact_reference_code: "H-2G66RH",
+            project_code: "PAGSIBOL VILLAGE MAGALANG PAMPANGA" 
+        };
+        console.log(res_arr);
+        const res_voucher = await fetch(route('api.voucher.generate'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+                 },
+            body: JSON.stringify(res_arr),
+        });
+        // console.log(res_voucher.json());
+        const res_vouchers = await res_voucher.json(); 
+        console.log(res_vouchers);
+        // const res_update = await fetch(route('api.buyer.update'), {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'Accept': 'application/json',
+        //     },
+        //     body: JSON.stringify({
+        //         contact_reference_code: "H-C47YHH",
+        //         match_link: "https://contracts-staging.homeful.ph/avail/create?reference=JN-XYVRQQ&voucher=LH-5FDKYG"
+        //     }),
+        // });
+        // console.log(res_update);
+        alert('Registration successful!');
+        // window.location.href = '/dashboard';
 
+    } catch (error) {
+        console.error('Network or server error:', error);
+        alert('An error occurred during submission.');
+    }
+};
 </script>
 
 <template>
     <section>
 
         <form
-            @submit.prevent="form.post(route('voucher.store'))"
+            @submit.prevent="submit"
             class="space-y-6"
         >
             <div>

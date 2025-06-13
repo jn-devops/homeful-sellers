@@ -11,6 +11,7 @@ use Homeful\References\Models\Reference;
 use Homeful\Properties\Data\ProjectData;
 use Homeful\Properties\Models\Project;
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Http;
 
 class ConsultedToAvailedSellerNotification extends Notification
 {
@@ -41,10 +42,13 @@ class ConsultedToAvailedSellerNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         $name = '';
-        $contact = $this->getContact();
-        if ($contact instanceof ContactMetaData) {
-            $name = $contact->name;
-        }
+        $reference = Reference::where('code', $this->reference_code)->first();
+        $contact =$reference->getEntities(\Homeful\Contacts\Models\Customer::class)->first();
+        $name = implode(' ', array_filter([
+            $contact->first_name ?? '',
+            mb_substr($contact->middle_name ?? '', 0, 1) ? mb_substr($contact->middle_name, 0, 1) . '.' : '',
+            $contact->last_name ?? '',
+        ]));
 
         $project_name = '';
         $project = $this->getProject();
@@ -53,6 +57,7 @@ class ConsultedToAvailedSellerNotification extends Notification
         }
 
         return (new MailMessage)
+            ->subject($name . ' has booked a unit at ' . $project_name)
             ->line('Hi ' . $notifiable->name)
             ->line($name . ' has booked a unit at ' . $project_name);
     }
@@ -72,6 +77,7 @@ class ConsultedToAvailedSellerNotification extends Notification
     protected function getContact(): ?ContactMetaData
     {
         $reference = Reference::where('code', $this->reference_code)->first();
+
         $contact = $reference->getContact();
 
         return $contact instanceof Contact

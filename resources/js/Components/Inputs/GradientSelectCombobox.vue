@@ -41,7 +41,9 @@ import DefaultGradientBorder from '../Container/DefaultGradientBorder.vue';
     const emit = defineEmits(['update:modelValue'])
 
     const query = ref('')
-    const selectedOption = ref(props.options.find(item => item.id === props.modelValue))
+    // const selectedOption = ref(props.options.find(item => item.id === props.modelValue))
+    const selectedOption = ref(props.options.find(item => item.id === props.modelValue) || null)
+
     const filteredOptions = computed(() =>
         query.value === ''
             ? props.options
@@ -50,8 +52,11 @@ import DefaultGradientBorder from '../Container/DefaultGradientBorder.vue';
             }),
     )
 
+    // watch(selectedOption, (newValue) => {
+    //     emit('update:modelValue', newValue)
+    // })
     watch(selectedOption, (newValue) => {
-        emit('update:modelValue', newValue.name)
+    emit('update:modelValue', newValue?.id ?? null)
     })
     
 </script>
