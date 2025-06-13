@@ -4,6 +4,7 @@ use App\Http\Controllers\APIController;
 use App\Http\Controllers\RedeemController;
 use App\Http\Controllers\VoucherControllerv2 as VoucherController;
 use App\Http\Controllers\BuyerController;
+use App\Http\Controllers\ContactController;
 // use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
@@ -18,3 +19,5 @@ Route::post('buyer/update', [BuyerController::class, 'updateBuyer'])->name('api.
 
 Route::post('notification/send-email', [NotificationController::class, 'send_email'])->name('api.sendEmail');
 Route::post('notification/send-sms', [NotificationController::class, 'send_sms'])->name('api.sendSMS');
+
+Route::post('delete/contact-via-mobile/{mobile}', [ContactController::class, 'delete_via_mobile'])->name('api.delete-contact-via-mobile');
