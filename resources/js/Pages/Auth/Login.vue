@@ -2,7 +2,7 @@
 <template>
   <Head title="Login" />
 
-  <b-alert show variant="warning">Warning Alert</b-alert>
+
   <div class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
     <div class="w-full max-w-md space-y-6">
       <div class="text-center">
@@ -10,6 +10,11 @@
       </div>
 
       <form @submit.prevent="submit" class="space-y-4">
+        <div v-if="$page.props.errors.message"
+show 
+class="alert alert-danger text-center float" role="alert">
+  {{ $page.props.errors.message }}
+</div>
         <div>
           <label for="email">Email Address</label>
           <input 
@@ -78,6 +83,7 @@ const form = useForm({
 
 const submit = () => {
     form.post(route('login'), {
+      preserveScroll: true
         // onFinish: () => form.reset('password'),
     });
 };

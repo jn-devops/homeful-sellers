@@ -92,18 +92,16 @@ public function store(Request $request)
         }
         else
         {
-                return response()->json([
-                    'message' => 'wrong_password',
-                    'error' => 'The provided credentials are incorrect.',
-                ], 500); 
 
             return back()->withErrors([
-                'email' => 'The provided credentials are incorrect.',
+                'message' => 'The provided credentials are incorrect.',
+                'status' => 'wrong password'
             ]);  
         }
     }
     return back()->withErrors([
-        'email' => 'The provided credentials are incorrect.',
+        'message' => 'The provided credentials are incorrect.',
+        'status' => 'wrong password'
     ]);
 }
     /**
