@@ -5,6 +5,7 @@ import { Head, usePage } from '@inertiajs/vue3';
 
 const props = defineProps({
     projects: Object,
+    voucher_input :Array
 });
 
 console.log(usePage().props.auth)

@@ -19,13 +19,17 @@ class GenerateVoucherCode
 
     public function handle(User $user, string $contact_reference_code, Project|string $project_code = null): string|false
     {
+        // dd(SyncContact::run($contact_reference_code));
+        // return $user;
+        // $project_code ="Pasinaya Homes Magalang Pampanga";
         $project = $project_code instanceof Project
             ? $project_code
-            : Project::where('code', $project_code)->first();
+            : Project::where('name', $project_code)->first();
         $seller_commission_code = GetSellerCommissionCode::run($user, $project);
+    
         $entities = [
             'input' => app(Input::class)->create(compact('seller_commission_code')),
-            'contact' => self::$contact = SyncContact::run($contact_reference_code)
+            'contact' => self::$contact = SyncContact::run($user,$contact_reference_code)
         ];
         self::$reference = References::withEntities(...$entities)
             ->withOwner($user)

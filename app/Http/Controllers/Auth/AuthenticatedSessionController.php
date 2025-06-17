@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
-
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
+use App\Models\User; // Adjust based on your user model location
 class AuthenticatedSessionController extends Controller
 {
     /**
@@ -27,15 +29,67 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
-    {
-        $request->authenticate();
+    // public function store(LoginRequest $request): RedirectResponse
+    // {
+    //     $request->authenticate();
+    //     $request->session()->regenerate();
+    //     return redirect()->intended(route('voucher.create', absolute: false));
+    // }
 
-        $request->session()->regenerate();
+public function store(Request $request)
+{
+    // Validate user input
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+    ]);
 
-        return redirect()->intended(route('voucher.create', absolute: false));
+    // $response = Http::asForm()->post('https://elanvital.enclavewrx.io/developers/api_storefront_seller/seller_login_info/admin/password', [
+    //     'email' => $credentials['email'],
+    //     'password' => $credentials['password'],
+    // ]);
+    $response = Http::asForm()
+    ->withToken('a34c9bef423b68fed296bd1e28e660a3bf282134c1dddb5458275b4bbb92360e')
+    ->post('https://everyhome.enclavewrx.io/developers/api_storefront_seller/seller_login_info/admin/password', [
+        'email' => $credentials['email'],
+        'password' => $credentials['password'],
+    ]);
+    // dd($response->json());
+    if ($response->successful()) {
+        $data = $response->json();
+        // dd($data );
+        if($data['message'] === "Login successful"){ //papalitan sa CS
+        
+        Session::put('external_token', $data['data']['password']);
+        Session::put('external_user', $data['data']['email']);
+
+        // Create or update a temporary user locally
+        $user = User::updateOrCreate(
+            ['email' => $data['data']['email']],
+            [   
+                'name' => $data['data']['first_name']. " " . $data['data']['last_name'], 
+                'seller_id' => $data['data']['id'],
+                'seller_commission_code' => $data['data']['SalesForceCode'],
+                'password' => $data['data']['password'],
+            ]
+        );
+        //create user delete on logout
+        Auth::login($user);
+        // dd($user);
+        return redirect('/dashboard');
+        }
+        else
+        {
+            return back()->withErrors([
+                'email' => 'The provided credentials are incorrect.',
+            ]);  
+        }
     }
 
+    return back()->withErrors([
+        'email' => 'The provided credentials are incorrect.',
+    ]);
+}
     /**
      * Destroy an authenticated session.
      */

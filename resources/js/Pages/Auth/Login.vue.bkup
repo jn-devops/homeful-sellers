@@ -1,0 +1,79 @@
+<script setup>
+import Checkbox from '@/Components/Checkbox.vue';
+import GuestLayout from '@/Layouts/GuestLayout.vue';
+import PasswordInput from '@/Components/Inputs/PasswordInput.vue';
+import PlainBlackButton from '@/Components/Buttons/PlainBlackButton.vue';
+import TextInput from '@/Components/Inputs/TextInput.vue';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+
+defineProps({
+    canResetPassword: {
+        type: Boolean,
+    },
+    status: {
+        type: String,
+    },
+});
+
+const form = useForm({
+    email: '',
+    password: '',
+    remember: false,
+});
+
+const submit = () => {
+    form.post(route('login'), {
+        onFinish: () => form.reset('password'),
+    });
+};
+</script>
+
+<template>
+    <GuestLayout>
+        <Head title="Log in" />
+
+        <div class="flex flex-col">
+            <div class="flex flex-col items-start w-full">
+                <div class="relative w-full">
+                    <div class="w-full h-[400px]">
+                        <img 
+                            :src="usePage().props.data.appURL + '/images/ModelUnitWalkthrough.gif'" alt="IMG"
+                            class="w-full h-full object-cover"
+                        >
+                    </div>
+                    <div class="z-20 absolute top-0 left-0 w-full h-[100px] bg-gradient-to-t from-transparent to-black">
+                    </div>
+                </div>
+                <div class="p-10 w-full">
+                    <form @submit.prevent="submit">
+                        <h2 class="text-xl font-extrabold">Welcome to Seller's Portal!</h2>
+                        <div class="w-full mt-5">
+                            <TextInput
+                                placeholder="Email Address"
+                                no-border-radius
+                                v-model="form.email"
+                                :error-message="form.errors.email"
+                            />
+                        </div>
+                        <div class="w-full mt-5">
+                            <PasswordInput
+                                placeholder="Password"
+                                no-border-radius
+                                v-model="form.password"
+                                :error-message="form.errors.password"
+                            />
+                        </div>
+                        <div class="">
+                            <Link :href="route('password.request')"><span class="text-blue-600 text-xs font-semibold">Forgot Password?</span></Link>
+                        </div>
+                        <div class="mt-5">
+                            <PlainBlackButton type="submit">
+                                <span class="font-semibold">Login</span>
+                            </PlainBlackButton>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </GuestLayout>
+</template>
