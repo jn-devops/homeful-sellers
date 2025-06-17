@@ -19,16 +19,32 @@ Route::get('/dashboard', function () {
     $user = Auth::user();
     $buyers = Contact::where('landline',  $user->email."/".$user->meta->seller_commission_code)
     ->where('current_status', NULL)
-    ->orderByDesc('created_at')
+    ->orderBy('created_at', 'desc')
+    // ->orderByDesc('created_at')
     ->get();
     // dd($buyers);
     // $buyers = Contact::all();
-    
-    
-
     return Inertia::render('Dashboard', ['buyers' => $buyers]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Route::get('/change-password', function () {
+//     $user = session('change_password_data');
+//     return Inertia::render('Auth/ChangePassword', [
+//         'user' => $user
+//     ]);
+// });
+Route::get('/change-password', function () {
+    $user = session('change_password_data');
+    if (!$user) {
+        Session::flush();
+        Auth::logout();   
+        return redirect('/login')->withErrors(['message' => 'Session expired. Please log in again.']);
+    }
+
+    return Inertia::render('Auth/ChangePassword', [
+        'user' => $user,
+    ]);
+});
 Route::get('buyer/register', [BuyerController::class, 'edit'])->middleware(['auth', 'verified'])->name('buyer.edit');
 Route::post('buyer/update', [BuyerController::class, 'buyerUpdate'])->name('buyer.update');
 

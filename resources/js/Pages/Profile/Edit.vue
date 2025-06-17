@@ -11,11 +11,14 @@ import { ref } from 'vue';
 const showPasswordModal = ref(false);
 
 const user = usePage().props.auth.user;
+const user_type = user.seller_id.split('-')[1]
 const form = useForm({
 
     name: user.name,
     email: user.email,
-    seller_commission_code: user.seller_commission_code,
+    contact: user.contact,
+    seller_commission_code: user.seller_commission_code.id,
+    // seller_id: user_type
 });
 
 defineProps({
@@ -50,7 +53,7 @@ defineProps({
                     </div>
                     <div class="row mb-2">
                         <div class="col-6 fw-bold">Phone Number:</div>
-                        <div class="col-6">{{ form.name }}</div>
+                        <div class="col-6">{{ form.contact }}</div>
                     </div>
                     <div class="row mb-2">
                         <div class="col-6 fw-bold">Email Address:</div>
@@ -93,7 +96,7 @@ defineProps({
           <button type="button" class="btn-close" @click="showPasswordModal = false"></button>
         </div>
         <div class="modal-body">
-          <UpdatePasswordForm />
+          <UpdatePasswordForm :user="form" :user_type="user_type"/>
         </div>
       </div>
     </div>

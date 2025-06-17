@@ -6,14 +6,14 @@ import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 
-const props = defineProps({
-    user: {
-        type: Object,
-    },
-    user_type: {
-        type: String,
-    },
-});
+// const props = defineProps({
+//     user: {
+//         type: Object,
+//     },
+//     user_type: {
+//         type: String,
+//     },
+// });
 
 const passwordInput = ref(null);
 const currentPasswordInput = ref(null);

@@ -1,4 +1,8 @@
+
 <template>
+  <Head title="Login" />
+
+  <b-alert show variant="warning">Warning Alert</b-alert>
   <div class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
     <div class="w-full max-w-md space-y-6">
       <div class="text-center">
@@ -47,7 +51,6 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -74,9 +77,8 @@ const form = useForm({
 });
 
 const submit = () => {
-  console.log("nice");
     form.post(route('login'), {
-        onFinish: () => form.reset('password'),
+        // onFinish: () => form.reset('password'),
     });
 };
 //

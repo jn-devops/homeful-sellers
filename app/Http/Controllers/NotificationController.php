@@ -11,7 +11,8 @@ class NotificationController extends Controller
 {
     //
     public function send_email(Request $request)
-    {
+    {   
+        dd($request);
         $jsonBody = $request->json()->all();
         $recipient = $jsonBody['recipient'];
         $template = $jsonBody['template'];

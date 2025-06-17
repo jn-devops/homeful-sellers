@@ -2,6 +2,9 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import {useForm, usePage, Link} from '@inertiajs/vue3';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 </script>
 <template>
     <Disclosure as="nav" class="bg-white shadow" v-slot="{ open }">

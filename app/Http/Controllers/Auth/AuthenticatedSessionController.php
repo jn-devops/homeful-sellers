@@ -12,7 +12,8 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
-use App\Models\User; // Adjust based on your user model location
+use App\Models\User; 
+
 class AuthenticatedSessionController extends Controller
 {
     /**
@@ -57,12 +58,11 @@ public function store(Request $request)
     // dd($response->json());
     if ($response->successful()) {
         $data = $response->json();
-        // dd($data );
+        // dd($data['data']['contact_number']);
         if($data['message'] === "Login successful"){ //papalitan sa CS
         
-        Session::put('external_token', $data['data']['password']);
-        Session::put('external_user', $data['data']['email']);
-
+        // Session::put('external_token', $data['data']['password']);
+        // Session::put('external_user', $data['data']['email']);
         // Create or update a temporary user locally
         $user = User::updateOrCreate(
             ['email' => $data['data']['email']],
@@ -71,8 +71,20 @@ public function store(Request $request)
                 'seller_id' => $data['data']['id'],
                 'seller_commission_code' => $data['data']['SalesForceCode'],
                 'password' => $data['data']['password'],
+                'contact' => $data['data']['contact_number']
             ]
         );
+        if($data['data']['change_password'] == 1) {
+            // Session::put('change_password_data', $data['data']);
+            // $data['data']['password']= $credentials['password'];
+            $type=explode('-',$data['data']['id']);
+            // return redirect('/change-password')->with('change_password_data', $data['data']);
+            return redirect('/change-password')->with('change_password_data', [
+                "email"=> $credentials['email'],
+                "type"=>$type[1]
+            ]);
+            // return redirect('/change-password');
+        }
         //create user delete on logout
         Auth::login($user);
         // dd($user);
@@ -80,12 +92,16 @@ public function store(Request $request)
         }
         else
         {
+                return response()->json([
+                    'message' => 'wrong_password',
+                    'error' => 'The provided credentials are incorrect.',
+                ], 500); 
+
             return back()->withErrors([
                 'email' => 'The provided credentials are incorrect.',
             ]);  
         }
     }
-
     return back()->withErrors([
         'email' => 'The provided credentials are incorrect.',
     ]);

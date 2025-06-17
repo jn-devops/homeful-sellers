@@ -7,12 +7,19 @@ use App\Models\User;
 use Homeful\References\Models\Reference;
 use Homeful\Properties\Models\Project;
 use App\Actions\RedeemVoucherCode;
+use Illuminate\Support\Carbon;
 
 class RedeemController extends Controller
 {
     public function validated_voucher($voucher)
     {
-        $voucher = Reference::where('code',$voucher)->first();
+        $date = Carbon::now();
+        // Carbon::now();
+        // dd($date);025-06-11 02:22:39
+        $voucher = Reference::where('code',$voucher)
+        ->whereDate('created_at', '>', $date)
+        ->first();
+        dd($voucher);
         if($voucher)
         {
             $user = User::where('id',$voucher['owner_id'])->first();

@@ -16,7 +16,9 @@ class RedeemVoucherCode
     {
         $voucher_code = $reference->code;
         $user = $reference->owner;
-        $project = Project::where('code',$meta['project_code'])->first();
+        // dd($reference->codownere);
+        $project = Project::where('code',"PVMP")->first();
+        // dd($project);
         $meta=[
             "project"=>$project->toArray(),
             "project_code"=>$project->code
