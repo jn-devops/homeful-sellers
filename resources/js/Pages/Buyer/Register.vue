@@ -364,10 +364,10 @@ const checkEmailExists = async (email) => {
                     </div>
                     <div>
                         <div class="flex items-center mt-2 mb-4 gap-2" @click="showCoborrow">
-                        <input type="checkbox" @click="addCoborrower" v-model="coboChecked" id="default-checkbox" class="w-5 h-5 text-[#F7C947] rounded-sm focus:ring-[#E94572]" style=" border-radius:25%;">
+                        <!-- <input type="checkbox" @click="addCoborrower" v-model="coboChecked" id="default-checkbox" class="w-5 h-5 text-[#F7C947] rounded-sm focus:ring-[#E94572]" style=" border-radius:25%;">
                         <label class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                             Add Coborrower
-                        </label>
+                        </label> -->
                         </div>
                         <div v-if="coboChecked">
                         <div>
@@ -402,14 +402,13 @@ const checkEmailExists = async (email) => {
               </div>
                 <div class="mt-3 ">
                     <div class="flex items-center mb-4 gap-2" @click="viewAgreements">
-                        <input type="checkbox"  @click="viewAgreements" v-model="disclaimerChecked" id="default-checkbox" class="w-5 h-5 text-[#F7C947] rounded-sm focus:ring-[#E94572]" style=" border-radius:25%;">
+                        <!-- <input type="checkbox"  @click="viewAgreements" v-model="disclaimerChecked" id="default-checkbox" class="w-5 h-5 text-[#F7C947] rounded-sm focus:ring-[#E94572]" style=" border-radius:25%;">
 
                         <label class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                             I've read and agree with the <b class="underline cursor-pointer">Terms of Use</b> and the <b class="underline cursor-pointer">Privacy Policy</b>.
-                        </label>
+                        </label> -->
                     </div>
                     <div class="mt-3">
-                    <!-- <PlainBlackButton type="submit" :disabled="!disclaimerChecked"> -->
                     <div class="container pt-3">
                     <button
                         class="text-sm text-center text-white bg-black fw-bold"

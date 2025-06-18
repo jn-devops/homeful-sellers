@@ -170,7 +170,7 @@ function setSort(key) {
         <div class="w-full sm:w-full md:w-[500px]">
           <h2 class="text-xl font-bold">{{ user.name }}</h2>
           <h5 class="text-sm font-semibold">
-            Seller Booking Code:
+            Seller Code:
             <span class="text-[#C38400]">{{ user.seller_commission_code }}</span>
           </h5>
         </div>
@@ -188,9 +188,6 @@ function setSort(key) {
     class="form-control form-control-sm" 
     placeholder="Search buyer by name, email, or mobile" 
   />
-  <div class="fs-3 absolute right-6 items-center cursor-pointer" style="z-index:1000" @click="togglePassword">
-  <i class="bi bi-search"></i>
-  </div>
 </div>
     <div class="table-responsive">
 <table class="table table-bordered table-striped table-hover mt-2 text-sm mb-0">
@@ -276,12 +273,12 @@ function setSort(key) {
           >
               Book Sales
           </button>
-          <button
+          <!-- <button
               class="mt-3 text-sm text-center text-white bg-secondary fw-bold"
               style="width: 100%; height: 40px;"
           >
               Register Prospect
-          </button>
+          </button> -->
           </div>
         <div>
       </div>
