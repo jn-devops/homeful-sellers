@@ -13,5 +13,9 @@ return [
         'org_id' => env('ENGAGESPARK_ORGANIZATION_ID', ''),
         'sender_id' => env('ENGAGESPARK_SENDER_ID', ''),
         'api_key' => env('ENGAGESPARK_API_KEY', ''),
+    ],
+    'api-urls' => [
+        'property' => env('PROJECTS_END_POINT','https://properties.homeful.ph'),
+        'match' => env('PROJECTS_END_POINT','https://match.homeful.ph')
     ]
 ];

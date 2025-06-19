@@ -9,6 +9,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Homeful\Contacts\Contacts;
+use Illuminate\Support\Facades\Http;
+       
 
 use Homeful\Contacts\Models\Customer as Contact;
 Route::get('/', function () {
@@ -27,12 +29,6 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard', ['buyers' => $buyers]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Route::get('/change-password', function () {
-//     $user = session('change_password_data');
-//     return Inertia::render('Auth/ChangePassword', [
-//         'user' => $user
-//     ]);
-// });
 Route::get('/change-password', function () {
     $user = session('change_password_data');
     if (!$user) {

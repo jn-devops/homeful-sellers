@@ -5,9 +5,10 @@ import GradientStyleInput from '@/Components/Inputs/GradientStyleInput.vue';
 import GradientStylePhoneNumber from '@/Components/Inputs/GradientStylePhoneNumber.vue';
 import GradientSelectCombobox from '@/Components/Inputs/GradientSelectCombobox.vue';
 import DefaultModal from '@/Components/DefaultModal.vue';
-import { Head, usePage ,useForm, Link, router} from '@inertiajs/vue3';
+import MatchModal from '@/Components/DefaultModal.vue';
+import { Head, usePage ,useForm, Link} from '@inertiajs/vue3';
 import Agreements from '@/Components/Agreements.vue';
-import { ref } from "vue";
+import { ref,watch,reactive} from "vue";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import QRCode from 'qrcode';
@@ -20,11 +21,12 @@ const props = defineProps({
 const user = usePage().props.auth.user;
 const seller_name = user.name
 const projects = usePage().props.projects.map(item => ({
-   id: item.project_code,
+   id: item.code,
    name: item.name
 }));
 const form = useForm({
     contact_reference_code: '',
+    project_name:'',
     project_code: '',
     first_name:'',
     last_name:'',
@@ -48,6 +50,9 @@ const mobileExistsError =ref('');
 const emailExistsError = ref('');
 const sentSMS= ref(false);
 const sentEmail= ref(false);
+const noMatchResult = ref(false);
+const suggestions = ref([]);
+
 
 
 
@@ -226,7 +231,7 @@ const sendEmail = async() => {
         });
         alert('Link sent to Email');
         sentEmail.value = true;
-    console.log(response.json());
+        console.log(response.json());
     }
     catch(e){
         console.log(e);
@@ -275,6 +280,50 @@ const checkEmailExists = async (email) => {
         return false;
     }
 };
+ //date of birth and gross monthly income and project is not null 
+ //if out focus 
+ //run api with form as request 
+ 
+ watch(
+  () => [form.date_of_birth, form.gross_monthly_income, form.project_code],
+  async ([dob, income, project]) => {
+    if (dob && income && project) {
+      try {
+        const response = await fetch(route('api.buyer.match'), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            date_of_birth: dob,
+            monthly_gross_income: income,
+            project_code: project
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        // console.log('Match API response:', data);
+        if (data['match'] === false) {
+        suggestions.value = data['suggestions'] || [];
+        noMatchResult.value = true;
+            } else {
+                suggestions.value = [];
+                noMatchResult.value = false;
+            }
+
+      } catch (error) {
+        console.error('Error during match:', error);
+      }
+    }
+  }
+);
+
+
 </script>
 
 <template>
@@ -350,7 +399,8 @@ const checkEmailExists = async (email) => {
                             required
                             v-model="form.date_of_birth"
                             :error="form.errors.date_of_birth"
-                        />
+                            @blur="() => match(form.date_of_birth, form.gross_monthly_income, form.project_code)"
+                            />
                     </div>
                     <div>
                     <GradientStyleInput
@@ -360,7 +410,23 @@ const checkEmailExists = async (email) => {
                             required
                             v-model="form.gross_monthly_income"
                             :error="form.errors.gross_monthly_income"
+                            @blur="() => match(form.date_of_birth, form.gross_monthly_income, form.project_code)"
                         />
+                    </div>
+                    <div v-if="noMatchResult" text-sm text-center text-white bg-black fw-bold>
+                        <p class="text-md text-gray-600 mb-4 text-warning">
+                       Buyer's GMI does not match the required for GMI.
+                    </p>
+                    <hr>
+                    <p class="text-sm text-gray-600 mb-4">Other Project offering that fits the buyer</p>
+                    <div v-if="noMatchResult && suggestions.length" class="mt-4">
+                        <ul class="list-disc pl-5 text-sm text-gray-700">
+                            <li v-for="(item, index) in suggestions" :key="index">
+                                {{ item.name }}
+                            </li>
+                        </ul>
+                    </div>
+
                     </div>
                     <div>
                         <div class="flex items-center mt-2 mb-4 gap-2" @click="showCoborrow">
@@ -377,6 +443,7 @@ const checkEmailExists = async (email) => {
                             required
                             v-model="form.cobo_date_of_birth"
                             :error="form.errors.cobo_date_of_birth"
+                            @blur="match(form.date_of_birth,form.gross_monthly_income,form.project_name)"
                         />
                         </div>
                         <div>
@@ -387,6 +454,7 @@ const checkEmailExists = async (email) => {
                             required
                             v-model="form.cobo_gross_monthly_income"
                             :error="form.errors.cobo_gross_monthly_income"
+                            @blur="match(form.date_of_birth,form.gross_monthly_income,form.project_name)"
                         />
                         </div>
                     </div>
@@ -398,6 +466,7 @@ const checkEmailExists = async (email) => {
                     :options="projects"
                     v-model="form.project_code"
                     :error-message="form.errors.project_code"
+                    @blur="match(form.date_of_birth,form.gross_monthly_income,form.project_name)"
                 />
               </div>
                 <div class="mt-3 ">
@@ -487,7 +556,6 @@ const checkEmailExists = async (email) => {
                     </div>
                 </div>
             </DefaultModal>
-
         </div>
             </div>
         </div>

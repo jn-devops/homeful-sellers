@@ -24,3 +24,4 @@ Route::post('notification/send-email', [NotificationController::class, 'send_ema
 Route::post('notification/send-sms', [NotificationController::class, 'send_sms'])->name('api.sendSMS');
 
 Route::delete('delete/contact-via-mobile/{mobile}', [ContactController::class, 'delete_via_mobile'])->name('api.delete-contact-via-mobile');
+Route::post('buyer/match-api', [BuyerController::class, 'match'])->name('api.buyer.match');
