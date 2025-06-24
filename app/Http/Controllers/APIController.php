@@ -29,4 +29,8 @@ class APIController extends Controller
             'user' => $user,
         ]);
     }
+    public static function authenticate_token($token)
+    {
+        return $token===config('homeful-sellers.api_token')?true:false;
+    }
 }

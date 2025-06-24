@@ -3,20 +3,31 @@
 namespace App\Http\Controllers;
 
 use App\Actions\GetSellerCommissionCode;
+use App\Http\Controllers\APIController;
 use App\Models\User;
 use Homeful\References\Models\Reference;
 use Homeful\Properties\Models\Project;
 use App\Actions\RedeemVoucherCode;
 use Illuminate\Support\Carbon;
+use Illuminate\Http\Request;
 
 class RedeemController extends Controller
-{
-    public function validated_voucher($voucher)
+{   
+    public function validated_voucher(Request $request)
     {
         $date = Carbon::now();
+        $voucher_code = $request->voucher;
+
+        $auth = APIController::authenticate_token($request->header('Authorization'));
+        if($auth===false){
+            return [
+                'message' => "Invalid API Token",
+            ];
+        }
+    //    dd($request->header('Authorization'));
         // Carbon::now();
         // dd($date);025-06-11 02:22:39
-        $voucher = Reference::where('code',$voucher)->
+        $voucher = Reference::where('code',$voucher_code)->
         where('redeemed_at',Null)->first();
         // ->whereDate('created_at', '>', $date)
         // ->first();
@@ -40,15 +51,23 @@ class RedeemController extends Controller
                 ];
         }
     }
-    public function redeem($voucher_code)
-    {
+    public function redeem(Request $request)
+    {   
         $date = Carbon::now();
+        $voucher_code = $request->voucher;
         // Carbon::now();
         // dd($date);025-06-11 02:22:39
+        $auth = APIController::authenticate_token($request->header('Authorization'));
+        if($auth===false){
+            return [
+                'message' => "Invalid API Token",
+            ];
+        }
         $voucher = Reference::where('code',$voucher_code)
         // ->whereDate('created_at', '>', $date)
         ->first();
         // dd($voucher);
+        
         if($voucher)
         {   
             $voucher = app(Reference::class)->updateOrCreate(['code'=>$voucher_code], ['redeemed_at'=>$date]);
