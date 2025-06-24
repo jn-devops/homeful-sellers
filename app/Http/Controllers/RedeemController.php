@@ -78,13 +78,16 @@ class RedeemController extends Controller
             return  [
                 'message' => "Success",
                 'seller_code' => $user->meta->seller_commission_code,
-                'seller_name' => $user->name
+                'seller_commission_code' => $user->meta->seller_commission_code,
+                'seller_name' => $user->name,
+                'status' => "Success"
                 ];
         }
         else{
             return  [
                 'message' => "voucher is not existing or expired",
-                'seller_commission_code' => null];
+                'seller_commission_code' => null
+                ];
         }
     }
 }
