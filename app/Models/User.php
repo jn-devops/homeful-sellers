@@ -40,7 +40,8 @@ class User extends Authenticatable
         'password',
         'seller_id', //added ggvivar 05/22/2025
         'seller_commission_code',//added ggvivar 05/22/2025
-        'contact'//added 06/13/2025
+        'contact',//added 06/13/2025
+        'seller_group'
     ];
 
     /**

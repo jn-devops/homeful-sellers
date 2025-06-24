@@ -421,7 +421,7 @@ const checkEmailExists = async (email) => {
                     <p class="text-sm text-gray-600 mb-4">Other Project offering that fits the buyer</p>
                     <div v-if="noMatchResult && suggestions.length" class="mt-4">
                         <ul class="list-disc pl-5 text-sm text-gray-700">
-                            <li v-for="(item, index) in suggestions" :key="index">
+                            <li v-for="(item, index) in suggestions.slice(0,2)" :key="index">
                                 {{ item.name }}
                             </li>
                         </ul>
