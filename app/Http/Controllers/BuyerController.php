@@ -33,16 +33,17 @@ class BuyerController extends Controller
             "date_of_birth"=> $request->date_of_birth,
             "monthly_gross_income" =>$request->monthly_gross_income,
             "region" => "NCR",
-            "verbose"=>1
+            "verbose"=>1,
+            "limit" => 999999999,//to bypass limit
         ]);
         
         $res_proj = $response->json();
-        // dd($res_proj);
+        dd($res_proj);
         $result=[];
         $suggestions=[];
         foreach($res_proj as $project => $value)
         {   
-            // echo $value['name'].'\n';
+            echo $value['name'].'\n';
             if(strtoupper($value['name'])===strtoupper($proj_name))
             {
                 $result=[
