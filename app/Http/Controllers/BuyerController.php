@@ -43,7 +43,7 @@ class BuyerController extends Controller
         $suggestions=[];
         foreach($res_proj as $project => $value)
         {   
-            echo $value['name'].'\n';
+            // echo $value['name'].'\n';
             if(strtoupper($value['name'])===strtoupper($proj_name))
             {
                 $result=[
