@@ -38,7 +38,7 @@ class BuyerController extends Controller
         ]);
         
         $res_proj = $response->json();
-        dd($res_proj);
+        // dd($res_proj);
         $result=[];
         $suggestions=[];
         foreach($res_proj as $project => $value)
