@@ -94,10 +94,12 @@ class BuyerController extends Controller
     
         // dd($listProject);
         $listProject = $this->get_projects();
+        $end_point_contracts = config('homeful-sellers.end-points.contract');
         // dd($listProject);
         return Inertia::render('Buyer/Register', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'projects' => $listProject,
+            'end_point_contract' => $end_point_contracts,
             'status' => session('status'),
         ]);
     }
