@@ -25,7 +25,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
                 <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
                     <!-- Current: "border-[#C38400] text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
                     <Link :href="route('dashboard')" :class="route().current('dashboard') ? 'border-[#C38400] text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'" class="inline-flex items-center border-b-2  px-1 pt-1 text-sm font-medium ">Dashboard</Link>
-                    <Link :href="route('projects.index')" :class="route().current('projects.index') ? 'border-[#C38400] text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'" class="inline-flex items-center border-b-2  px-1 pt-1 text-sm font-medium ">Projects</Link>
+                    <!-- <Link :href="route('projects.index')" :class="route().current('projects.index') ? 'border-[#C38400] text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'" class="inline-flex items-center border-b-2  px-1 pt-1 text-sm font-medium ">Projects</Link> -->
                 </div>
                 </div>
                 <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
