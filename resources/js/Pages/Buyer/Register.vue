@@ -514,17 +514,17 @@
                         </div>
                         <hr>
                         <p class="text-sm text-gray-600 mb-4">
-                            Scan the QR code below <br>
+                            Scan the QR code above <br>
                             or <br>
-                            Send Booking Link via:
+                            Share Booking Link via:
                         </p>
                         <div class="flex flex-col items-center space-y-2">
-                            <input
+                            <!-- <input
                                 type="text"
                                 :value="matchLink"
                                 readonly
                                 class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
-                            />
+                            /> -->
                             <div class ="d-block mt-3"> 
                             <button
                                 @click="sendSMS"
@@ -545,7 +545,7 @@
                                 @click="copyToClipboard"
                                 class="btn btn-primary px-2 py-1 mx-1 text-white"
                             >
-                            <i class="bi bi-copy"></i>Copy
+                            <i class="bi bi-copy"></i>Copy Link
                             </button>
                         </div>
                         </div>
