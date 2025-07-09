@@ -135,6 +135,7 @@ const filteredBuyers = computed(() => {
   let result = buyers.filter(buyer =>
     buyer.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
     buyer.email.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    buyer.reference_code.toLowerCase().includes(searchQuery.value.toLowerCase()) ||//added ggvivar reference code filter 07/09/2025
     buyer.mobile.includes(searchQuery.value)
   );
 
@@ -180,13 +181,34 @@ function setSort(key) {
     <div class="flex flex-col items-center justify-center mt-3 px-2">
       <div class="w-full sm:w-full md:w-[500px] border-2 shadow-lg px-2">
         <div class="buyer-table-wrapper">
-    <span class="fs-6 fw-bold">My Buyers</span>
+    <div class="row">
+        <span class="fs-6 fw-bold col-6 mt-1">My Buyers</span>
+        <div class="my-1 col-6 text-end">
+          <button
+              @click="router.visit('/buyer/register')"
+              class="text-sm text-end text-white bg-black fw-bold px-2"
+              style="width: auto; height: auto; border-radius: 12px;"
+          >
+          <span><i class="bi bi-person-add"></i> Add Client</span>
+          </button>
+          <!-- <button
+              class="mt-3 text-sm text-center text-white bg-secondary fw-bold"
+              style="width: 100%; height: 40px;"
+          >
+              Register Prospect
+          </button> -->
+          </div>
+    </div>
+   
+   
+        <div>
+      </div>
 <div class="mt-2 mb-2 flex">
   <input 
     v-model="searchQuery" 
     type="text" 
     class="form-control form-control-sm" 
-    placeholder="Search buyer by name, email, or mobile" 
+    placeholder="Search buyer by name, homeful id, email, or mobile" 
   />
 </div>
     <div class="table-responsive">
@@ -265,23 +287,7 @@ function setSort(key) {
 </div>
 
       </div>
-        <div class="container pt-7">
-          <button
-              @click="router.visit('/buyer/register')"
-              class="text-sm text-center text-white bg-black fw-bold"
-              style="width: 100%; height: 40px;"
-          >
-              Book Sales
-          </button>
-          <!-- <button
-              class="mt-3 text-sm text-center text-white bg-secondary fw-bold"
-              style="width: 100%; height: 40px;"
-          >
-              Register Prospect
-          </button> -->
-          </div>
-        <div>
-      </div>
+       
       <!--added-->
       <!-- Confirmation -->
       <div v-if="confirmationModal" class="modal fade show d-block" style="background: rgba(0, 0, 0, 0.5);">

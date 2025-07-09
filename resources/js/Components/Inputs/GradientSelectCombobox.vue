@@ -62,6 +62,7 @@ import DefaultGradientBorder from '../Container/DefaultGradientBorder.vue';
 </script>
 <template>
     <label for="input" class="font-bold text-sm">{{ label }} <span v-if="required" class="text-red-600">*</span></label>
+    
     <DefaultGradientBorder>
         <Combobox as="div" v-model="selectedOption" @update:modelValue="query = ''">
             <div class="relative">
@@ -70,19 +71,40 @@ import DefaultGradientBorder from '../Container/DefaultGradientBorder.vue';
                     <ChevronUpDownIcon class="size-5 text-gray-400" aria-hidden="true" />
                 </ComboboxButton>
     
-                <ComboboxOptions v-if="filteredOptions.length > 0" class="absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white py-1 text-base shadow-lg ring-1 ring-gray-400 focus:outline-none sm:text-sm">
-                    <ComboboxOption v-for="person in filteredOptions" :key="person.id" :value="person" as="template" v-slot="{ active, selected }">
-                        <li :class="['relative cursor-default select-none py-2 pl-3 pr-9', active ? 'bg-[#C38400] text-white outline-none' : 'text-gray-900']">
-                            <span :class="['block truncate', selected && 'font-semibold']">
-                            {{ person.name }}
-                            </span>
-    
-                            <span v-if="selected" :class="['absolute inset-y-0 right-0 flex items-center pr-4', active ? 'text-white' : 'text-[#C38400]']">
-                                <CheckIcon class="size-5" aria-hidden="true" />
-                            </span>
-                        </li>
-                    </ComboboxOption>
-                </ComboboxOptions>
+                <ComboboxOptions
+  v-if="filteredOptions.length > 0"
+  class="absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white py-1 text-base shadow-lg ring-1 ring-gray-400 focus:outline-none sm:text-sm"
+>
+  <ComboboxOption
+    v-for="person in filteredOptions"
+    :key="person.id"
+    :value="person"
+    as="template"
+    v-slot="{ active, selected }"
+  >
+    <li
+      :class="[
+        'relative cursor-default select-none py-2 pl-3 pr-9',
+        active ? 'bg-[#C38400] text-white outline-none' : 'text-gray-900',
+      ]"
+    >
+      <span :class="['block whitespace-normal', selected && 'font-semibold']">
+        {{ person.name }}
+      </span>
+
+      <span
+        v-if="selected"
+        :class="[
+          'absolute inset-y-0 right-0 flex items-center pr-4',
+          active ? 'text-white' : 'text-[#C38400]',
+        ]"
+      >
+        <CheckIcon class="size-5" aria-hidden="true" />
+      </span>
+    </li>
+  </ComboboxOption>
+</ComboboxOptions>
+
             </div>
         </Combobox>
     </DefaultGradientBorder>
