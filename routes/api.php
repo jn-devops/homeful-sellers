@@ -7,6 +7,7 @@ use App\Http\Controllers\BuyerController;
 use App\Http\Controllers\ContactController;
 // use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\EncryptController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -25,3 +26,6 @@ Route::post('notification/send-sms', [NotificationController::class, 'send_sms']
 
 Route::delete('delete/contact-via-mobile/{mobile}', [ContactController::class, 'delete_via_mobile'])->name('api.delete-contact-via-mobile');
 Route::post('buyer/match-api', [BuyerController::class, 'match'])->name('api.buyer.match');
+Route::post('/encrypt',function(Request $request){
+    return EncryptController::encrypt($request->input('credential'));
+});

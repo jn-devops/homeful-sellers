@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\EncryptController;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ use Inertia\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 use App\Models\User; 
-
+use Illuminate\Support\Facades\Crypt;
 class AuthenticatedSessionController extends Controller
 {
     /**
@@ -36,15 +37,31 @@ class AuthenticatedSessionController extends Controller
     //     $request->session()->regenerate();
     //     return redirect()->intended(route('voucher.create', absolute: false));
     // }
-
+public function first_login($credential){
+        // dd($credential);
+    $request = new Request;
+    $decrypt = EncryptController::decrypt($credential);
+    // return $encrypt;
+    $credential = explode('|',$decrypt);
+    $request->email = $credential[0];
+    $request->password =$credential[1];
+    $reponse = $this->store($request);
+    return $reponse;
+    }
 public function store(Request $request)
-{
+{   
+    // dd($request);
     // Validate user input
-    $credentials = $request->validate([
-        'email' => ['required', 'email'],
-        'password' => ['required'],
-    ]);
 
+    // $credentials = $request->validate([
+    //     'email' => ['required', 'email'],
+    //     'password' => ['required'],
+    // ]);
+    $credentials = [
+        'email' => $request->email,
+        'password' => $request->password
+    ];
+    // dd($credentials);
     // $response = Http::asForm()->post('https://elanvital.enclavewrx.io/developers/api_storefront_seller/seller_login_info/admin/password', [
     //     'email' => $credentials['email'],
     //     'password' => $credentials['password'],

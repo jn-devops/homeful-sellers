@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\SyncProjectsController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\ProjectController;
@@ -13,6 +14,11 @@ use Illuminate\Support\Facades\Http;
        
 
 use Homeful\Contacts\Models\Customer as Contact;
+
+Route::get('/admin/dashboard', function(){
+
+
+});
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
@@ -55,5 +61,6 @@ Route::middleware('auth')->group(function () {
 Route::post('voucher/generate', [VoucherController::class,'generateVoucher'])->middleware(['auth', 'verified'])->name('voucher.generate');
 Route::resource('voucher', VoucherController::class)->middleware(['auth', 'verified'])->only(['create', 'store']);
 Route::resource('projects', ProjectController::class);
+Route::get('authenticate/login/{credential}', [AuthenticatedSessionController::class,'first_login']);
 Route::resource('sync-projects', SyncProjectsController::class)->only(['create', 'store']);
 require __DIR__.'/auth.php';
