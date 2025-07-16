@@ -17,7 +17,7 @@ return [
     ],
     'api-urls' => [
         'property' => env('PROJECTS_END_POINT','https://properties.homeful.ph'),
-        'match' => env('PROJECTS_END_POINT','https://match.homeful.ph')
+        'match' => env('MATCH_END_POINT','https://match.homeful.ph')
     ],
     'api_token' => 'Bearer '.env('API_TOKEN','UcQzIoYSM7OU2Ltrk73fmguiK0k39JW09hmzVuvDBysDAaDklsVmqkBDdYWHP9jD'),
     'encrypt_key' => env('ENCRYPT_KEY',"E893DF3162A99877722355927C7E7")
