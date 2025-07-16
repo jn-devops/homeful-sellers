@@ -13,12 +13,26 @@ class NotificationController extends Controller
     public function send_email(Request $request)
     {   
         // dd($request);
+        // $jsonBody = $request->json()->all();
+        // $recipient = $jsonBody['recipient'];
+        // $template = $jsonBody['template'];
+        // $mailBody = $jsonBody['mailBody'];
+        // Mail::to($recipient)->send(new SendMail($template,$mailBody));
+        // return response()->json(['status' => 'Email sent successfully']);
+
         $jsonBody = $request->json()->all();
-        $recipient = $jsonBody['recipient'];
-        $template = $jsonBody['template'];
-        $mailBody = $jsonBody['mailBody'];
-        Mail::to($recipient)->send(new SendMail($template,$mailBody));
-        return response()->json(['status' => 'Email sent successfully']);
+    $recipient = $jsonBody['recipient'];
+    $template = $jsonBody['template'];
+    $mailBody = $jsonBody['mailBody'];
+    $htmlBody = $jsonBody['htmlBody'] ?? null;
+    // Assuming 'email' is in $data
+    if (empty($recipient)) {
+        return response()->json(['error' => 'Recipient email is required'], 400);
+    }
+
+    Mail::to($recipient)->send(new SendMail($template, $mailBody, $htmlBody));
+
+    return response()->json(['message' => 'Email sent successfully']);
     
     }
     public function send_sms(Request $request){
