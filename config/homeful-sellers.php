@@ -20,6 +20,6 @@ return [
         'match' => env('MATCH_END_POINT','https://match.homeful.ph')
     ],
     'api_token' => 'Bearer '.env('API_TOKEN','UcQzIoYSM7OU2Ltrk73fmguiK0k39JW09hmzVuvDBysDAaDklsVmqkBDdYWHP9jD'),
-    'encrypt_key' => env('ENCRYPT_KEY',"E893DF3162A99877722355927C7E7")
+    'encrypt_key' => env('ENCRYPT_KEY',"LoPGxhMbXfq1uUxK2+bn9QbdvTheCKJRxLKWS1qUIFtQ+l+mSPPzLeyMMHVwS5YO")
     
 ];
