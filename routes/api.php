@@ -29,3 +29,6 @@ Route::post('buyer/match-api', [BuyerController::class, 'match'])->name('api.buy
 Route::post('/encrypt',function(Request $request){
     return EncryptController::encrypt($request->input('credential'));
 });
+Route::post('/decrypt',function(Request $request){
+    return EncryptController::decrypt($request->input('credential'));
+});
