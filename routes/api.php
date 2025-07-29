@@ -20,12 +20,15 @@ Route::get('redeem/{voucher}', [RedeemController::class,'validated_voucher'])->n
 Route::post('redeem/{voucher}', [RedeemController::class,'redeem'])->name('redeem');
 
 Route::post('buyer/update', [BuyerController::class, 'updateBuyer'])->name('api.buyer.update');
+Route::get('buyer/sync/{referenceCode}', [BuyerController::class, 'syncBuyer'])->name('api.sync.update');
+Route::post('buyer/sync/{referenceCode}', [BuyerController::class, 'syncBuyer'])->name('api.sync');
 
 Route::post('notification/send-email', [NotificationController::class, 'send_email'])->name('api.sendEmail');
 Route::post('notification/send-sms', [NotificationController::class, 'send_sms'])->name('api.sendSMS');
 
 Route::delete('delete/contact-via-mobile/{mobile}', [ContactController::class, 'delete_via_mobile'])->name('api.delete-contact-via-mobile');
 Route::post('buyer/match-api', [BuyerController::class, 'match'])->name('api.buyer.match');
+
 Route::post('/encrypt',function(Request $request){
     return EncryptController::encrypt($request->input('credential'));
 });

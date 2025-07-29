@@ -4,8 +4,9 @@
 <body>
     Hi Mr/Mrs/Ms <b>{{$body['name']}}</b>,<br><br>
 
-    Here is your temporary password: <b>{{$body['password']}}</b><br><br>
-
+    Here is your temporary password: <b>{{$body['password']}}</b><br>
+    or<br>
+    Click <a href="{{$body['quicklink']}}">here.</a> <br><br>
     Thank you!<br><br>
 
     <p>----this is an automated email do not reply----</p>

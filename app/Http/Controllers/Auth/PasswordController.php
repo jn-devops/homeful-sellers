@@ -12,7 +12,7 @@ use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Http;
 use App\Models\User; 
 use Illuminate\Support\Facades\Auth;
-
+use App\Http\Controllers\EncryptController;
 class PasswordController extends Controller
 {
     /**
@@ -75,10 +75,15 @@ class PasswordController extends Controller
                 //     ]
                 //  );
                }
+               $bodyRequest =$request->email."|".$data['password'];
+
+               $url = 'https://sellers-staging.homeful.ph/authenticate/login/'.EncryptController::encrypt($bodyRequest);
+            //    return $url;
                $mailBody = [
                         "subject"=>"Temporary Password",
                         "name"=>$checkUser->name,
-                        "password"=>$data['password']
+                        "password"=>$data['password'],
+                        "quicklink"=>$url
                ];
                $recipient = $request->recipient?$request->recipient:$request->email;
             //    dd($recipient);

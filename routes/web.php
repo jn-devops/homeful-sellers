@@ -25,15 +25,21 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     $user = Auth::user();
-    $buyers = Contact::where('landline',  $user->email."/".$user->meta->seller_commission_code)
-    ->where('current_status', NULL)
-    ->orderBy('created_at', 'desc')
-    // ->orderByDesc('created_at')
-    ->get();
-    // dd($buyers);
-    // $buyers = Contact::all();
-    return Inertia::render('Dashboard', ['buyers' => $buyers]);
+
+    $buyers = Contact::where('landline', $user->email . "/" . $user->meta->seller_commission_code)
+        // ->whereNull('current_status')
+        ->orderBy('created_at', 'desc')
+        ->get();
+    $buyerList = [];
+    foreach ($buyers as $buyer) {
+        $documents = BuyerController::getAttachment($buyer->reference_code);
+        $buyerList[] = [$buyer,$documents['success']?$documents['data']:[]];
+       
+    }
+    // dd($buyerList);
+    return Inertia::render('Dashboard', ['buyers' => $buyerList]);
 })->middleware(['auth', 'verified'])->name('dashboard');
+
 
 Route::get('/change-password', function () {
     $user = session('change_password_data');

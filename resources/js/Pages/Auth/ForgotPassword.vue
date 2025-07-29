@@ -32,7 +32,7 @@ const submit = () => {
     <div class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div class="w-full max-w-md space-y-6">
         <div class="text-center">
-            <h2 class="text-2xl font-bold text-gray-900">Welcome to Seller’s Portal!</h2>
+            <h2 class="text-2xl font-bold text-gray-900">Seller Forgot Password</h2>
         </div>
   
         <div

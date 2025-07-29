@@ -10,14 +10,19 @@ import QRCode from 'qrcode';
 // Get logged in user & buyers data from props
 const user = usePage().props.auth.user;
 const buyers = usePage().props.buyers.map(buyer => ({
-  id: buyer.id,
-  first_name: buyer.first_name,
-  name: buyer.first_name + " " + buyer.last_name,
-  email: buyer.email,
-  mobile: buyer.mobile,
-  match_link: buyer.other_mobile,
-  reference_code: buyer.reference_code,
-  date_created: buyer.created_at
+  id: buyer[0].id,
+  first_name: buyer[0].first_name,
+  name: buyer[0].first_name + " " + buyer[0].last_name,
+  email: buyer[0].email,
+  mobile: buyer[0].mobile,
+  match_link: buyer[0].other_mobile,
+  reference_code: buyer[0].reference_code,
+  date_created: buyer[0].created_at,
+  status: buyer[0].current_status,
+  list_attachment: buyer[1].list_attachment,
+  uploaded_attachment: buyer[1].uploaded_attachment,
+  total_attachment: buyer[1].total_attachments ,
+  total_uploaded_attachment: buyer[1].total_uploaded_attachment
 }));
 
 // UI states
@@ -160,6 +165,28 @@ function setSort(key) {
 function toggleExpand(buyerId) {
   expandedBuyerId.value = expandedBuyerId.value === buyerId ? null : buyerId;
 }
+
+//sync Buyer 
+async function syncBuyer(referenceCode) {
+  // const url = `api/buyer/sync/${referenceCode}`;
+  const url = route('api.sync.update', { referenceCode });
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' }
+    });
+    if (!response.ok) throw new Error('Sync failed');
+    const data = await response.json();
+    console.log('Sync result:', data);
+    showToast(`Synced data for Homeful ID ${referenceCode}`);
+  } catch (error) {
+    console.error('Sync error:', error);
+    showToast('Failed to sync. Please try again.');
+  }
+}
+
+
 </script>
 
 <template>
@@ -219,7 +246,10 @@ function toggleExpand(buyerId) {
                   <!-- (i) icon moved left, toggles expand -->
                   <i class="bi bi-info-circle text-primary me-1" style="cursor:pointer;"
                      @click="toggleExpand(buyer.id)"></i>
-                  {{ buyer.name }}
+                  {{ buyer.name }}<br>
+                  <span :class="buyer.status == null || buyer.status == ''? 'bg-warning px-2 ml-4 rounded' : 'bg-success px-2 ml-4 rounded text-white'">
+                    {{ buyer.status == null || buyer.status == '' ? 'Pending' : buyer.status }}
+                  </span>
                 </td>
                 <td class="text-end">
                   <div class="d-inline-flex gap-1">
@@ -236,7 +266,14 @@ function toggleExpand(buyerId) {
                   <p class="mb-1"><strong>Homeful ID:</strong> {{ buyer.reference_code }}</p>
                   <p class="mb-1"><strong>Email:</strong> {{ buyer.email }}</p>
                   <p class="mb-1"><strong>Mobile:</strong> {{ buyer.mobile }}</p>
-                  <p class="mb-0"><strong>Date Created:</strong> {{ buyer.date_created }}</p>
+                  <p class="mb-1"><strong>Date Created:</strong> {{ buyer.date_created }}</p>
+                  <p class="mb-1"><b>Document List:</b> {{ buyer.total_attachment == null || buyer.total_uploaded_attachment == null ? 'N/A' : buyer.total_uploaded_attachment+'/'+buyer.total_attachment }} 
+                     <i class="bi bi-folder-x text-danger"></i></p>
+                  <!-- <p class="mb-0 btn btn-primary"><i class="bi bi-arrow-repeat">Sync</i></p> -->
+                  <button class="btn btn-primary btn-sm" @click="syncBuyer(buyer.reference_code)">
+                     <i class="bi bi-arrow-repeat"></i> Sync
+                  </button>
+
                 </td>
               </tr>
             </template>

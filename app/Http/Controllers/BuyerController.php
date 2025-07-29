@@ -91,7 +91,6 @@ class BuyerController extends Controller
         //     $table = $split[1];
         // }
         // dd($projects);
-    
         // dd($listProject);
         $listProject = $this->get_projects();
         $end_point_contracts = config('homeful-sellers.end-points.contract');
@@ -164,5 +163,44 @@ class BuyerController extends Controller
             }
         }
         return $listProject;
+    } 
+    public function syncBuyer($referenceCode)
+    {
+        $url = "https://gnc-lazarus-demo.homeful.ph/contact/get-contact-by-homeful-id/{$referenceCode}";
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer 31|nq1LQLP7oRh4mldNtgUIZQdIXE7t30iQkflHAh3T68e346a5',
+                'Accept' => 'application/json'
+            ])->get($url);
+            $data = $response->json();
+            // return $data['data'];// convert to array
+            $user = Contact::updateOrCreate(
+                ['reference_code' => $referenceCode],
+                ['current_status' => $data['data']['current_status']] // update status
+                
+            );
+            return $user;
+            return response()->json($response->json(), $response->status());
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Unable to fetch data', 'message' => $e->getMessage()]);
+        }
+    }
+    public static function getAttachment($referenceCode)
+    {
+        $url = "https://gnc-lazarus-demo.homeful.ph/api/contact/get-attachment/{$referenceCode}";
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer 31|nq1LQLP7oRh4mldNtgUIZQdIXE7t30iQkflHAh3T68e346a5',
+                'Accept' => 'application/json'
+            ])->get($url);
+            return $response->json();
+            return response()->json($response->json(), $response->status());
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Unable to fetch data', 'message' => $e->getMessage()]);
+        }
+    }
+    public function sync($response)
+    {
+        return $response;
     }
 }
