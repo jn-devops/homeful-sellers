@@ -49,15 +49,21 @@ defineProps({
                 <div class="my-3 py-3 container">
                     <div class="row mb-2">
                         <div class="col-6 fw-bold">Full Name:</div>
-                        <div class="col-6">{{ form.name }}</div>
+                        <div class="col-12">{{ form.name }}</div>
                     </div>
                     <div class="row mb-2">
-                        <div class="col-6 fw-bold">Phone Number:</div>
+                        <div class="col-12 fw-bold">Phone Number:</div>
                         <div class="col-6">{{ form.contact }}</div>
+                        <div class="col-6">
+                        <button class="btn-primary d-flex justify-content-end text-end rounded-pill bg-primary text-white px-2" @click="showPasswordModal = true">
+                            Change
+                        </button>
+                    </div>
+
                     </div>
                     <div class="row mb-2">
                         <div class="col-6 fw-bold">Email Address:</div>
-                        <div class="col-6">{{ form.email }}</div>
+                        <div class="col-12">{{ form.email }}</div>
                     </div>
                     <div class="row mb-2" style="display: none;">
                         <div class="col-sm-3 fw-bold">Seller Booking Code:</div>

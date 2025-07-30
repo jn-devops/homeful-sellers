@@ -12,9 +12,9 @@ Password: {{$body['password']}}<br><br>
 
 or
 <br><br>
-Click <a href="{{$body['url']}}">here</a> to login.<br><br>
+Click <a href="{{$body['url']}}">here</a> to login.
 
-<b style='color:red;'>*****Change your password immediately*****</b><br><br>
+change your password immediately.<br><br>
 <!-- Login to  and Change your password immediately<br><br> -->
 
 We’re excited to have you with us! Let us know if you need any help.<br><br>

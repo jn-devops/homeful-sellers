@@ -134,19 +134,60 @@ async function sendEmail(buyer) {
 }
 
 // Filter & sort buyers list based on search and sort key
+const showDateFilterModal = ref(false);
+const dateFilter = ref('all'); // options: 'all' | 'today' | '7days' | '30days'
+
 //start added search/sort
+// const filteredBuyers = computed(() => {
+//   let result = buyers.filter(buyer =>
+//     buyer.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+//     buyer.email.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+//     buyer.reference_code.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+//     buyer.mobile.includes(searchQuery.value)
+//   );
+//   result.sort((a, b) => {
+//     let modifier = sortDirection.value === 'asc' ? 1 : -1;
+//     return a[sortKey.value] < b[sortKey.value] ? -1 * modifier :
+//            a[sortKey.value] > b[sortKey.value] ? 1 * modifier : 0;
+//   });
+//   return result;
+// });
 const filteredBuyers = computed(() => {
-  let result = buyers.filter(buyer =>
-    buyer.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-    buyer.email.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-    buyer.reference_code.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-    buyer.mobile.includes(searchQuery.value)
-  );
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  let result = buyers.filter(buyer => {
+    const matchesSearch =
+      buyer.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      buyer.email.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      buyer.reference_code.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      buyer.mobile.includes(searchQuery.value);
+
+    if (!matchesSearch) return false;
+
+    const createdDate = new Date(buyer.date_created);
+
+    if (dateFilter.value === 'today') {
+      return createdDate >= todayStart;
+    } else if (dateFilter.value === '7days') {
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(now.getDate() - 7);
+      return createdDate >= sevenDaysAgo;
+    } else if (dateFilter.value === '30days') {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(now.getDate() - 30);
+      return createdDate >= thirtyDaysAgo;
+    }
+
+    return true; // no date filter
+  });
+
   result.sort((a, b) => {
     let modifier = sortDirection.value === 'asc' ? 1 : -1;
     return a[sortKey.value] < b[sortKey.value] ? -1 * modifier :
            a[sortKey.value] > b[sortKey.value] ? 1 * modifier : 0;
   });
+
   return result;
 });
 
@@ -185,6 +226,12 @@ async function syncBuyer(referenceCode) {
     showToast('Failed to sync. Please try again.');
   }
 }
+const greeting = computed(() => {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good Morning!';
+  else if (hour < 18) return 'Good Afternoon!';
+  else return 'Good Evening!';
+});
 
 
 </script>
@@ -196,9 +243,9 @@ async function syncBuyer(referenceCode) {
   <template #header>
     <div class="flex flex-col items-center mt-7 px-2">
       <div class="w-full md:w-[500px]">
-        <h2 class="text-xl font-bold">{{ user.name }}</h2>
+        <h2 class="text-xl font-bold">Hi {{ user.name }}, {{ greeting }}</h2>
         <h5 class="text-sm font-semibold">
-          Seller Code: <span class="text-brand">{{ user.seller_commission_code }}</span>
+          <!-- Seller Code: <span class="text-brand">{{ user.seller_commission_code }}</span> -->
         </h5>
       </div>
     </div>
@@ -219,6 +266,17 @@ async function syncBuyer(referenceCode) {
         </div>
       </div>
       <input v-model="searchQuery" class="form-control form-control-sm mb-2 rounded" placeholder="Search buyer by name, Homeful ID, email, or mobile" />
+      <div class="d-flex justify-content-end mb-2">
+      <button class="btn btn-outline-secondary btn-sm" @click="showDateFilterModal = true">
+        <i class="bi bi-calendar3"></i> Filter by Date
+      </button>
+    </div>
+    <div v-if="dateFilter !== 'all'" class="text-muted small mb-2">
+  Filtered by:
+  <strong v-if="dateFilter === 'today'">Today</strong>
+  <strong v-else-if="dateFilter === '7days'">Last 7 Days</strong>
+  <strong v-else-if="dateFilter === '30days'">Last 30 Days</strong>
+</div>
 
       <div class="table-responsive">
         <table class="table table-bordered table-hover text-sm align-middle">
@@ -248,7 +306,7 @@ async function syncBuyer(referenceCode) {
                      @click="toggleExpand(buyer.id)"></i>
                   {{ buyer.name }}<br>
                   <span :class="buyer.status == null || buyer.status == ''? 'bg-warning px-2 ml-4 rounded' : 'bg-success px-2 ml-4 rounded text-white'">
-                    {{ buyer.status == null || buyer.status == '' ? 'Pending' : buyer.status }}
+                    {{ buyer.status == null || buyer.status == '' ? 'Prospect' : buyer.status }}
                   </span>
                 </td>
                 <td class="text-end">
@@ -320,6 +378,26 @@ async function syncBuyer(referenceCode) {
       </div>
     </div>
   </div>
+  <!--Date filter modal-->
+  <!-- Date Filter Modal -->
+<div v-if="showDateFilterModal" class="modal fade show d-block" style="background: rgba(0,0,0,0.5); z-index:1050;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h6 class="modal-title">Filter Buyers by Date</h6>
+        <button type="button" class="btn-close" @click="showDateFilterModal = false"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-grid gap-2">
+          <button class="btn btn-outline-primary" @click="dateFilter = 'today'; showDateFilterModal = false">Today</button>
+          <button class="btn btn-outline-primary" @click="dateFilter = '7days'; showDateFilterModal = false">Last 7 Days</button>
+          <button class="btn btn-outline-primary" @click="dateFilter = '30days'; showDateFilterModal = false">Last 30 Days</button>
+          <button class="btn btn-outline-secondary" @click="dateFilter = 'all'; showDateFilterModal = false">Clear Filter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
   <!-- Toast -->
   <div v-if="toastMessage" class="position-fixed bottom-0 end-0 m-3">
