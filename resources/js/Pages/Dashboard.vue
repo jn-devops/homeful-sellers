@@ -135,7 +135,32 @@ async function sendEmail(buyer) {
 
 // Filter & sort buyers list based on search and sort key
 const showDateFilterModal = ref(false);
-const dateFilter = ref('all'); // options: 'all' | 'today' | '7days' | '30days'
+const dateFilter = ref('today'); 
+//added 08042025 ggvivar
+const startDate = ref('');
+const endDate = ref('');
+
+function applyDateRange() {
+  if (startDate.value && endDate.value) {
+    dateFilter.value = 'dateRange';
+    showDateFilterModal.value = false;
+  }
+}
+function clearDateFilter() {
+  dateFilter.value = 'today';
+  startDate.value = '';
+  endDate.value = '';
+  showDateFilterModal.value = false;
+}
+function formatDate(date) {
+  if (!date) return '';
+  const d = new Date(date);
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${month}/${day}/${year}`;
+}
+
 
 //start added search/sort
 // const filteredBuyers = computed(() => {
@@ -152,6 +177,46 @@ const dateFilter = ref('all'); // options: 'all' | 'today' | '7days' | '30days'
 //   });
 //   return result;
 // });
+
+// const filteredBuyers = computed(() => {
+//   const now = new Date();
+//   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+//   let result = buyers.filter(buyer => {
+//     const matchesSearch =
+//       buyer.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+//       buyer.email.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+//       buyer.reference_code.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+//       buyer.mobile.includes(searchQuery.value);
+
+//     if (!matchesSearch) return false;
+
+//     const createdDate = new Date(buyer.date_created);
+
+//     if (dateFilter.value === 'today') {
+//       return createdDate >= todayStart;
+//     } else if (dateFilter.value === '7days') {
+//       const sevenDaysAgo = new Date();
+//       sevenDaysAgo.setDate(now.getDate() - 7);
+//       return createdDate >= sevenDaysAgo;
+//     } else if (dateFilter.value === '30days') {
+//       const thirtyDaysAgo = new Date();
+//       thirtyDaysAgo.setDate(now.getDate() - 30);
+//       return createdDate >= thirtyDaysAgo;
+//     }
+
+//     return true; // no date filter
+//   });
+
+//   result.sort((a, b) => {
+//     let modifier = sortDirection.value === 'asc' ? 1 : -1;
+//     return a[sortKey.value] < b[sortKey.value] ? -1 * modifier :
+//            a[sortKey.value] > b[sortKey.value] ? 1 * modifier : 0;
+//   });
+
+//   return result;
+// });
+
 const filteredBuyers = computed(() => {
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -177,9 +242,14 @@ const filteredBuyers = computed(() => {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(now.getDate() - 30);
       return createdDate >= thirtyDaysAgo;
+    } else if (dateFilter.value === 'dateRange') {
+      const start = new Date(startDate.value);
+      const end = new Date(endDate.value);
+      end.setHours(23, 59, 59, 999); // Include full end date
+      return createdDate >= start && createdDate <= end;
     }
 
-    return true; // no date filter
+    return true; // default if no filter
   });
 
   result.sort((a, b) => {
@@ -191,7 +261,8 @@ const filteredBuyers = computed(() => {
   return result;
 });
 
-// Change sort key / direction
+
+// for sorting via date created
 function setSort(key) {
   if (sortKey.value === key) {
     sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
@@ -271,12 +342,23 @@ const greeting = computed(() => {
         <i class="bi bi-calendar3"></i> Filter by Date
       </button>
     </div>
-    <div v-if="dateFilter !== 'all'" class="text-muted small mb-2">
+    <!-- <div v-if="dateFilter !== 'all'" class="text-muted small mb-2">
   Filtered by:
   <strong v-if="dateFilter === 'today'">Today</strong>
   <strong v-else-if="dateFilter === '7days'">Last 7 Days</strong>
   <strong v-else-if="dateFilter === '30days'">Last 30 Days</strong>
+</div> -->
+<div v-if="dateFilter !== 'all'" class="text-muted small mb-2">
+  <strong>Filtered by:</strong>
+  <strong v-if="dateFilter === 'today'">Today</strong>
+  <strong v-else-if="dateFilter === '7days'">Last 7 Days</strong>
+  <strong v-else-if="dateFilter === '30days'">Last 30 Days</strong>
+  <strong v-else-if="dateFilter === '30days'">All</strong>
+  <strong v-else-if="dateFilter === 'dateRange'">
+     <br>{{ formatDate(startDate) }} - {{ formatDate(endDate) }}
+  </strong>
 </div>
+
 
       <div class="table-responsive">
         <table class="table table-bordered table-hover text-sm align-middle">
@@ -312,9 +394,31 @@ const greeting = computed(() => {
                 <td class="text-end">
                   <div class="d-inline-flex gap-1">
                     <!-- Transaction buttons inside circle, keep functions -->
-                    <a href="#" @click.prevent="openQRModal(buyer.match_link)" class="circle-btn"><i class="bi bi-qr-code"></i></a>
+                    <!-- <a href="#" @click.prevent="openQRModal(buyer.match_link)" class="circle-btn"><i class="bi bi-qr-code"></i></a>
                     <a href="#" @click.prevent="showConfirmation('Send booking link via Email?', sendEmail, buyer)" class="circle-btn text-primary"><i class="bi bi-envelope"></i></a>
-                    <a href="#" @click.prevent="showConfirmation('Send booking link via SMS?', sendSMS, buyer)" class="circle-btn text-success"><i class="bi bi-send"></i></a>
+                    <a href="#" @click.prevent="showConfirmation('Send booking link via SMS?', sendSMS, buyer)" class="circle-btn text-success"><i class="bi bi-send"></i></a> -->
+                    <!-- Email button -->
+                  <a href="#" 
+                    @click.prevent="buyer.status == null || buyer.status === '' ? openQRModal(buyer.match_link) : null"
+                    class="circle-btn"
+                    :class="{ 'disabled-btn': buyer.status != null && buyer.status !== '' }"
+                    :aria-disabled="buyer.status != null && buyer.status !== ''">
+                    <i class="bi bi-qr-code"></i>
+                  </a>
+                  <a href="#" 
+                    @click.prevent="buyer.status == null || buyer.status === '' ? showConfirmation('Send booking link via Email?', sendEmail, buyer) : null"
+                    class="circle-btn text-primary"
+                    :class="{ 'disabled-btn': buyer.status != null && buyer.status !== '' }"
+                    :aria-disabled="buyer.status != null && buyer.status !== ''">
+                    <i class="bi bi-envelope"></i>
+                  </a>
+                  <a href="#" 
+                    @click.prevent="buyer.status == null || buyer.status === '' ? showConfirmation('Send booking link via SMS?', sendSMS, buyer) : null"
+                    class="circle-btn text-success"
+                    :class="{ 'disabled-btn': buyer.status != null && buyer.status !== '' }"
+                    :aria-disabled="buyer.status != null && buyer.status !== ''">
+                    <i class="bi bi-send"></i>
+                  </a>
                   </div>
                 </td>
               </tr>
@@ -380,7 +484,7 @@ const greeting = computed(() => {
   </div>
   <!--Date filter modal-->
   <!-- Date Filter Modal -->
-<div v-if="showDateFilterModal" class="modal fade show d-block" style="background: rgba(0,0,0,0.5); z-index:1050;">
+<!-- <div v-if="showDateFilterModal" class="modal fade show d-block" style="background: rgba(0,0,0,0.5); z-index:1050;">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header bg-dark text-white">
@@ -397,9 +501,37 @@ const greeting = computed(() => {
       </div>
     </div>
   </div>
+</div> -->
+<!-- Date Filter Modal -->
+<div v-if="showDateFilterModal" class="modal fade show d-block" style="background: rgba(0,0,0,0.5); z-index:1050;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h6 class="modal-title">Filter Buyers by Date</h6>
+        <button type="button" class="btn-close" @click="showDateFilterModal = false"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-grid gap-2 mb-3">
+          <button class="btn btn-outline-primary" @click="dateFilter = 'today'; showDateFilterModal = false">Today</button>
+          <button class="btn btn-outline-primary" @click="dateFilter = '7days'; showDateFilterModal = false">Last 7 Days</button>
+          <button class="btn btn-outline-primary" @click="dateFilter = '30days'; showDateFilterModal = false">Last 30 Days</button>
+          <button class="btn btn-outline-primary" @click="dateFilter = 'all'; showDateFilterModal = false">All</button>
+        </div>
+        <div class="pt-2">
+          <label class="form-label fw-bold">Select Date</label><br>
+          <label class="form-label">From:</label>
+          <input type="date" v-model="startDate" class="form-control form-control-sm mb-2" />
+          <label class="form-label">To:</label>
+          <input type="date" v-model="endDate" class="form-control form-control-sm mb-2" />
+          <button class="btn btn-outline-success btn-sm" @click="applyDateRange">Apply</button>
+        </div>
+        <button class="btn btn-outline-secondary btn-sm mt-3" @click="clearDateFilter">Clear Filter</button>
+      </div>
+    </div>
+  </div>
 </div>
 
-  <!-- Toast -->
+
   <div v-if="toastMessage" class="position-fixed bottom-0 end-0 m-3">
     <div class="toast show text-white bg-success">
       <div class="toast-body">{{ toastMessage }}</div>
@@ -452,4 +584,10 @@ const greeting = computed(() => {
   from { opacity:0; transform: translateY(-4px); }
   to { opacity:1; transform: translateY(0); }
 }
+.disabled-btn {
+  pointer-events: none;
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 </style>
