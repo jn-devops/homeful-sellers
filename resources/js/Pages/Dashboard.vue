@@ -353,7 +353,7 @@ const greeting = computed(() => {
   <strong v-if="dateFilter === 'today'">Today</strong>
   <strong v-else-if="dateFilter === '7days'">Last 7 Days</strong>
   <strong v-else-if="dateFilter === '30days'">Last 30 Days</strong>
-  <strong v-else-if="dateFilter === '30days'">All</strong>
+  <strong v-else-if="dateFilter === 'all'">All</strong>
   <strong v-else-if="dateFilter === 'dateRange'">
      <br>{{ formatDate(startDate) }} - {{ formatDate(endDate) }}
   </strong>
@@ -512,10 +512,26 @@ const greeting = computed(() => {
       </div>
       <div class="modal-body">
         <div class="d-grid gap-2 mb-3">
-          <button class="btn btn-outline-primary" @click="dateFilter = 'today'; showDateFilterModal = false">Today</button>
-          <button class="btn btn-outline-primary" @click="dateFilter = '7days'; showDateFilterModal = false">Last 7 Days</button>
-          <button class="btn btn-outline-primary" @click="dateFilter = '30days'; showDateFilterModal = false">Last 30 Days</button>
-          <button class="btn btn-outline-primary" @click="dateFilter = 'all'; showDateFilterModal = false">All</button>
+          <button 
+            :class="dateFilter === 'today' ? 'btn btn-primary' : 'btn btn-outline-primary'"
+            @click="dateFilter = 'today'; showDateFilterModal = false">
+            Today
+          </button>
+          <button 
+            :class="dateFilter === '7days' ? 'btn btn-primary' : 'btn btn-outline-primary'"
+            @click="dateFilter = '7days'; showDateFilterModal = false">
+            Last 7 Days
+          </button>
+          <button 
+            :class="dateFilter === '30days' ? 'btn btn-primary' : 'btn btn-outline-primary'"
+            @click="dateFilter = '30days'; showDateFilterModal = false">
+            Last 30 Days
+          </button>
+          <button 
+            :class="dateFilter === 'all' ? 'btn btn-primary' : 'btn btn-outline-primary'"
+            @click="dateFilter = 'all'; showDateFilterModal = false">
+            All
+          </button>
         </div>
         <div class="pt-2">
           <label class="form-label fw-bold">Select Date</label><br>

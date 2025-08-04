@@ -325,7 +325,19 @@
         }
     }
     );
+    watch(() => form.first_name, (val) => {
+    form.first_name = toProperCase(val);
+    });
 
+    watch(() => form.last_name, (val) => {
+        form.last_name = toProperCase(val);
+    });
+    //added to propercase name
+    function toProperCase(str) {
+    return str
+        .toLowerCase()
+        .replace(/\b\w/g, char => char.toUpperCase());
+    }
 
     </script>
 
