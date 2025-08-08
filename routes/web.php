@@ -34,6 +34,9 @@ Route::get('/dashboard', function () {
     foreach ($buyers as $buyer) {
         $documents = BuyerController::getAttachment($buyer->reference_code);
         $buyerList[] = [$buyer,$documents['success']?$documents['data']:[]];
+        // $documents = BuyerController::getAttachment($buyer->reference_code);
+        $buyerList[] = [$buyer, ($documents['success'] ?? false) ? ($documents['data'] ?? []) : []];
+
        
     }
     // dd($buyerList);
