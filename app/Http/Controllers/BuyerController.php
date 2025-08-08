@@ -188,7 +188,7 @@ class BuyerController extends Controller
     }
     public static function getAttachment($referenceCode)
     {
-        $url = config('homeful-sellers.end-points.loan_processing')."contact/get-attachment/{$referenceCode}";
+        $url = config('homeful-sellers.end-points.loan_processing')."api/contact/get-attachment/{$referenceCode}";
         try {
             $response = Http::withHeaders([
                 'Authorization' => config('homeful-sellers.api_loan_process'),
