@@ -166,10 +166,11 @@ class BuyerController extends Controller
     } 
     public function syncBuyer($referenceCode)
     {
-        $url = "https://gnc-lazarus-demo.homeful.ph/contact/get-contact-by-homeful-id/{$referenceCode}";
+        
+        $url = config('homeful-sellers.end-points.loan_processing')."contact/get-contact-by-homeful-id/{$referenceCode}";
         try {
             $response = Http::withHeaders([
-                'Authorization' => 'Bearer 31|nq1LQLP7oRh4mldNtgUIZQdIXE7t30iQkflHAh3T68e346a5',
+                'Authorization' => config('homeful-sellers.api_loan_process'),
                 'Accept' => 'application/json'
             ])->get($url);
             $data = $response->json();
@@ -187,10 +188,10 @@ class BuyerController extends Controller
     }
     public static function getAttachment($referenceCode)
     {
-        $url = "https://gnc-lazarus-demo.homeful.ph/api/contact/get-attachment/{$referenceCode}";
+        $url = config('homeful-sellers.end-points.loan_processing')."api/contact/get-attachment/{$referenceCode}";
         try {
             $response = Http::withHeaders([
-                'Authorization' => 'Bearer 31|nq1LQLP7oRh4mldNtgUIZQdIXE7t30iQkflHAh3T68e346a5',
+                'Authorization' => config('homeful-sellers.api_loan_process'),
                 'Accept' => 'application/json'
             ])->get($url);
             return $response->json();

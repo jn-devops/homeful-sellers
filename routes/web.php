@@ -33,8 +33,9 @@ Route::get('/dashboard', function () {
     $buyerList = [];
     foreach ($buyers as $buyer) {
         $documents = BuyerController::getAttachment($buyer->reference_code);
-        $buyerList[] = [$buyer,$documents['success']?$documents['data']:[]];
-       
+        // $buyerList[] = [$buyer,$documents['success']?$documents['data']:[]];
+        $success = isset($documents['success']) ? $documents['success'] : false;//added for validation
+        $buyerList[] = [$buyer, $success ? $documents['data'] : []];
     }
     // dd($buyerList);
     return Inertia::render('Dashboard', ['buyers' => $buyerList]);
