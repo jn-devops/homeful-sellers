@@ -11,7 +11,7 @@ class NotificationController extends Controller
 {
     //
     public function send_email(Request $request)
-    {   
+    {
         // dd($request);
         // $jsonBody = $request->json()->all();
         // $recipient = $jsonBody['recipient'];
@@ -25,7 +25,7 @@ class NotificationController extends Controller
     $template = $jsonBody['template'];
     $mailBody = $jsonBody['mailBody'];
     $htmlBody = $jsonBody['htmlBody'] ?? null;
-    
+
     if (empty($recipient)) {
         return response()->json(['error' => 'Recipient email is required'], 400);
     }
@@ -33,7 +33,7 @@ class NotificationController extends Controller
     Mail::to($recipient)->send(new SendMail($template, $mailBody, $htmlBody));
 
     return response()->json(['message' => 'Email sent successfully']);
-    
+
     }
     public function send_sms(Request $request){
         $recipient = $request->mobile;
@@ -45,10 +45,10 @@ class NotificationController extends Controller
             "ENGAGESPARK_API_KEY"=>$request->header("x-sms-api")?$request->header("x-sms-api"):config("homeful-sellers.engagespark.api_key")
         ];
         // dd($credential['ENGAGESPARK_ORGANIZATION_ID']);
-       
+
         // return [$recipient];
 
-        $apiUrl = 'https://api.engagespark.com/v1/sms/contact';
+        $apiUrl = 'https://api.engagespark.com/v1/sms/phonenumber';
         $apiKey = $credential['ENGAGESPARK_API_KEY'];
 
         $response = Http::withHeaders([
@@ -74,6 +74,6 @@ class NotificationController extends Controller
             'success' => true,
             'response' => $response->json(),
         ];
-    
+
     }
 }
