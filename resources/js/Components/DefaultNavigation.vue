@@ -1,9 +1,13 @@
 <script setup>
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
-import {useForm, usePage, Link} from '@inertiajs/vue3';
+import { useForm, usePage, Link } from '@inertiajs/vue3';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+const user = usePage().props.auth.user;
+const permission = usePage().props.permissions;
+const config = usePage().props.config;
 
 </script>
 <template>
@@ -19,53 +23,133 @@ import 'bootstrap/dist/css/bootstrap.min.css';
                 </DisclosureButton>
                 </div> -->
                 <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                <div class="flex fw-bold fs-4 shrink-0 items-center cursor-pointer">
-                    Seller Booking App
-                </div>
-                <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                    <!-- Current: "border-[#C38400] text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
-                    <Link :href="route('dashboard')" :class="route().current('dashboard') ? 'border-[#C38400] text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'" class="inline-flex items-center border-b-2  px-1 pt-1 text-sm font-medium ">Dashboard</Link>
-                    <!-- <Link :href="route('projects.index')" :class="route().current('projects.index') ? 'border-[#C38400] text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'" class="inline-flex items-center border-b-2  px-1 pt-1 text-sm font-medium ">Projects</Link> -->
-                </div>
+                    <div class="flex fw-bold fs-4 shrink-0 items-center cursor-pointer">
+                        Seller Booking App
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <!-- Current: "border-[#C38400] text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
+                        <Link
+                            :href="route('dashboard')"
+                            :class="route().current('dashboard') ? 'border-[#C38400] text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'"
+                            class="inline-flex items-center border-b-2  px-1 pt-1 text-sm font-medium no-underline">Home
+                        </Link>
+                        <Link v-if="config && config.lead && config.lead.view"
+                            :href="route('lead.index')"
+                            :class="route().current('lead.index') ? 'border-[#C38400] text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'"
+                            class="inline-flex items-center border-b-2  px-1 pt-1 text-sm font-medium no-underline">
+                        Buyer Lead</Link>
+                        <Link v-if="config && config.buyers && config.buyers.view"
+                            :href="route('buyers.index')"
+                            :class="route().current('buyers.index') ? 'border-[#C38400] text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'"
+                            class="inline-flex items-center border-b-2  px-1 pt-1 text-sm font-medium no-underline">
+                        Manage Buyer</Link>
+                        <Link v-if="config && config.agents && config.agents.view"
+                            :href="route('agents.index')"
+                            :class="route().current('agents.index') ? 'border-[#C38400] text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'"
+                            class="inline-flex items-center border-b-2  px-1 pt-1 text-sm font-medium no-underline">
+                        Manage Agent/Broker</Link>
+                        <!-- <Link :href="route('projects.index')" :class="route().current('projects.index') ? 'border-[#C38400] text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'" class="inline-flex items-center border-b-2  px-1 pt-1 text-sm font-medium ">Projects</Link> -->
+                    </div>
                 </div>
                 <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                <!-- <button class="relative rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#C38400] focus:ring-offset-2">
+                    <!-- <button class="relative rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#C38400] focus:ring-offset-2">
                     <span class="absolute -inset-1.5" />
                     <span class="sr-only">View notifications</span>
                     <BellIcon class="size-6" aria-hidden="true" />
                 </button> -->
 
-                <!-- Profile dropdown -->
-                <Menu as="div" class="relative ml-3">
-                    <div>
-                    <MenuButton class="relative flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#C38400] focus:ring-offset-2">
-                        <span class="absolute -inset-1.5" />
-                        <span class="sr-only">Open user menu</span>
-                        <svg class="size-8 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                            <path fill-rule="evenodd" d="M12 20a7.966 7.966 0 0 1-5.002-1.756l.002.001v-.683c0-1.794 1.492-3.25 3.333-3.25h3.334c1.84 0 3.333 1.456 3.333 3.25v.683A7.966 7.966 0 0 1 12 20ZM2 12C2 6.477 6.477 2 12 2s10 4.477 10 10c0 5.5-4.44 9.963-9.932 10h-.138C6.438 21.962 2 17.5 2 12Zm10-5c-1.84 0-3.333 1.455-3.333 3.25S10.159 13.5 12 13.5c1.84 0 3.333-1.455 3.333-3.25S13.841 7 12 7Z" clip-rule="evenodd"/>
-                        </svg>
-                        <!-- <img class="size-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" /> -->
-                    </MenuButton>
-                    </div>
-                    <transition enter-active-class="transition ease-out duration-200" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-                    <MenuItems class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none">
-                        <MenuItem v-slot="{ active }">
-                            <Link :href="route('dashboard')" :class="[active ? 'bg-gray-100 outline-none' : '', 'block px-4 py-2 text-sm text-gray-700']"><i class="bi bi-house-door"></i>Home</Link>
-                        </MenuItem>
-                        <MenuItem v-slot="{ active }">
-                            <Link :href="route('profile.edit')" :class="[active ? 'bg-gray-100 outline-none' : '', 'block px-4 py-2 text-sm text-gray-700']"><i class="bi bi-person"></i>Profile</Link>
-                        </MenuItem>
-                        <!-- <MenuItem v-slot="{ active }">
-                            <Link :href="route('sync-projects.create')" :class="[active ? 'bg-gray-100 outline-none' : '', 'block px-4 py-2 text-sm text-gray-700']">Sync Project</Link>
-                        </MenuItem> -->
-                        <MenuItem v-slot="{ active }">
-                            <Link :href="route('logout')"
-                                method="post"
-                                as="button" :class="[active ? 'bg-gray-100 outline-none' : '', 'block px-4 py-2 text-sm text-gray-700']">Logout</Link>
-                        </MenuItem>
-                    </MenuItems>
-                    </transition>
-                </Menu>
+                    <!-- Profile dropdown -->
+                    <Menu as="div" class="relative ml-3">
+                        <div>
+                            <MenuButton
+                                class="relative flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#C38400] focus:ring-offset-2">
+                                <span class="absolute -inset-1.5" />
+                                <span class="sr-only">Open user menu</span>
+                                <svg class="size-8 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                    width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                    <path fill-rule="evenodd"
+                                        d="M12 20a7.966 7.966 0 0 1-5.002-1.756l.002.001v-.683c0-1.794 1.492-3.25 3.333-3.25h3.334c1.84 0 3.333 1.456 3.333 3.25v.683A7.966 7.966 0 0 1 12 20ZM2 12C2 6.477 6.477 2 12 2s10 4.477 10 10c0 5.5-4.44 9.963-9.932 10h-.138C6.438 21.962 2 17.5 2 12Zm10-5c-1.84 0-3.333 1.455-3.333 3.25S10.159 13.5 12 13.5c1.84 0 3.333-1.455 3.333-3.25S13.841 7 12 7Z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <!-- <img class="size-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" /> -->
+                            </MenuButton>
+                        </div>
+                        <transition enter-active-class="transition ease-out duration-200"
+                            enter-from-class="transform opacity-0 scale-95"
+                            enter-to-class="transform opacity-100 scale-100"
+                            leave-active-class="transition ease-in duration-75"
+                            leave-from-class="transform opacity-100 scale-100"
+                            leave-to-class="transform opacity-0 scale-95">
+                            <MenuItems
+                                class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none">
+                                <MenuItem v-slot="{ active }">
+                                <Link :href="route('dashboard')"
+                                    :class="[active ? 'bg-gray-100 outline-none' : '', 'block px-4 py-2 text-sm text-gray-700 no-underline']">
+                                <i class="bi bi-house-door"></i> Home
+                                </Link>
+                                </MenuItem>
+
+                                <MenuItem v-slot="{ active }">
+                                <Link :href="route('profile.edit')"
+                                    :class="[active ? 'bg-gray-100 outline-none' : '', 'block px-4 py-2 text-sm text-gray-700 no-underline']">
+                                <i class="bi bi-person"></i> Profile
+                                </Link>
+                                </MenuItem>
+                                <!-- Configuration submenu -->
+                                 
+                                <Menu v-if="config && config.config && config.config.view" as="div" class="relative">
+                                    <MenuButton
+                                        class="flex w-full items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#C38400] rounded-md">
+                                        <span><i class="bi bi-gear"></i> Configuration</span>
+                                        <svg class="ml-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </MenuButton>
+
+                                    <transition enter-active-class="transition ease-out duration-200"
+                                        enter-from-class="transform opacity-0 scale-95"
+                                        enter-to-class="transform opacity-100 scale-100"
+                                        leave-active-class="transition ease-in duration-75"
+                                        leave-from-class="transform opacity-100 scale-100"
+                                        leave-to-class="transform opacity-0 scale-95">
+                                        <MenuItems class="absolute mt-0 w-full rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none
+                                            left-0 top-full z-50
+                                            sm:left-full sm:top-0 sm:mt-0 sm:w-48 sm:origin-top-left">
+
+                                            <MenuItem v-slot="{ active }">
+                                            <Link :href="route('users.index')"
+                                                :class="[active ? 'bg-gray-100 outline-none' : '', 'block px-4 py-2 text-sm text-gray-700 no-underline']">
+                                            <i class="bi bi-person-add"></i> Users
+                                            </Link>
+                                            </MenuItem>
+
+                                            <MenuItem v-slot="{ active }">
+                                            <Link :href="route('roles.index')"
+                                                :class="[active ? 'bg-gray-100 outline-none' : '', 'block px-4 py-2 text-sm text-gray-700 no-underline']">
+                                            <i class="bi bi-person-fill-lock"></i> Roles
+                                            </Link>
+                                            </MenuItem>
+
+                                            <MenuItem v-slot="{ active }">
+                                            <Link :href="route('modules.index')"
+                                                :class="[active ? 'bg-gray-100 outline-none' : '', 'block px-4 py-2 text-sm text-gray-700 no-underline']">
+                                            <i class="bi bi-person-workspace"></i> Modules
+                                            </Link>
+                                            </MenuItem>
+                                        </MenuItems>
+                                    </transition>
+                                </Menu>
+                                <MenuItem v-slot="{ active }">
+                                <Link :href="route('logout')" method="post" as="button"
+                                    :class="[active ? 'bg-gray-100 outline-none' : '', 'block px-4 py-2 text-sm text-gray-700 no-underline']">
+                                Logout
+                                </Link>
+                                </MenuItem>
+                            </MenuItems>
+                        </transition>
+                    </Menu>
                 </div>
             </div>
         </div>
@@ -73,14 +157,18 @@ import 'bootstrap/dist/css/bootstrap.min.css';
         <DisclosurePanel class="sm:hidden">
             <div class="space-y-1 pb-4 pt-2">
                 <!-- Current: "bg-indigo-50 border-[#C38400] text-indigo-700", Default: "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700" -->
-                <DisclosureButton as="a" href="#" :class="route().current('voucher.create') ? 'border-[#C38400] bg-indigo-50 py-2 pl-3 pr-4 text-base font-medium text-indigo-700' : 'border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700'" class="block border-l-4 ">
-                    <Link :href="route('voucher.create')" >
-                        Voucher
+                <DisclosureButton as="a" href="#"
+                    :class="route().current('voucher.create') ? 'border-[#C38400] bg-indigo-50 py-2 pl-3 pr-4 text-base font-medium text-indigo-700' : 'border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700'"
+                    class="block border-l-4 ">
+                    <Link :href="route('voucher.create')">
+                    Voucher
                     </Link>
                 </DisclosureButton>
                 <DisclosureButton as="a" href="#" class="block border-l-4 ">
-                    <Link :href="route('projects.index')" :class="route().current('projects.index') ? 'border-[#C38400] bg-indigo-50 py-2 pl-3 pr-4 text-base font-medium text-indigo-700' : 'border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700'" class="block border-l-4 ">
-                        Projects
+                    <Link :href="route('projects.index')"
+                        :class="route().current('projects.index') ? 'border-[#C38400] bg-indigo-50 py-2 pl-3 pr-4 text-base font-medium text-indigo-700' : 'border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700'"
+                        class="block border-l-4 ">
+                    Projects
                     </Link>
                 </DisclosureButton>
             </div>

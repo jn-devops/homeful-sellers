@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Http;
 
 class LoginRequest extends FormRequest
 {
@@ -45,11 +46,26 @@ class LoginRequest extends FormRequest
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                // 'email' => trans('auth.failed'),
+                'email' => 'The provided credentials are incorrect.',
             ]);
         }
 
         RateLimiter::clear($this->throttleKey());
+
+        // $checkSellerCommisionStatus = Http::asForm()
+        // ->withToken('a34c9bef423b68fed296bd1e28e660a3bf282134c1dddb5458275b4bbb92360e')
+        // ->get('https://everyhome.enclavewrx.io/developers/api_storefront_seller/checkSellerStatus/'.Auth::user()->meta->seller_commission_code);
+        // Check if the user and seller commission code is acive
+        // if (!Auth::user()->active || ! $checkSellerCommisionStatus) {
+        if (!Auth::user()->active) {
+            Auth::logout();
+            RateLimiter::hit($this->throttleKey());
+            
+            throw ValidationException::withMessages([
+                'email' => 'Your account is not active.',
+            ]);
+        }
     }
 
     /**

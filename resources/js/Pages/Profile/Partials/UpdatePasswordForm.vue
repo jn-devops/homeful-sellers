@@ -107,7 +107,13 @@ const updatePassword = () => {
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing || passwordMismatch">Save</PrimaryButton>
+                <!-- <PrimaryButton :disabled="form.processing || passwordMismatch">Save</PrimaryButton> -->
+                <PrimaryButton 
+  :disabled="form.processing || passwordMismatch || !form.password || !form.password_confirmation"
+>
+  Save
+</PrimaryButton>
+
             </div>
             <div class="flex justify-center" style="z-index:1000">
     <Transition

@@ -23,7 +23,7 @@ const props = defineProps({
 const passwordMismatch = ref(false);
 const form = useForm({
   email: props.user?.email || '',
-  type: props.user?.type || '',
+  // type: props.user?.type || '',
   password: '',
   confirm_password: '',
   change_type: 'change',
@@ -36,8 +36,7 @@ const submit = () => {
     passwordMismatch.value = true;
     return;
   }
-
-  form.post(route('password.change')); // <-- make sure this route exists in your backend
+  form.post(route('password.change')); 
 };
 </script>
 <template>

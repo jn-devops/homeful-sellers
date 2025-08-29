@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Homeful\Properties\Models\Project;
+use App\Models\User;
 use Inertia\Response;
 use Inertia\Inertia;
 class BuyerController extends Controller
@@ -203,5 +204,77 @@ class BuyerController extends Controller
     public function sync($response)
     {
         return $response;
+    }
+    public function index(){
+        $seller_commission_code = "%".auth::user()->seller_commission_code."%";
+        $buyers = Contact::where('landline', "like" , $seller_commission_code)
+        ->orderBy('created_at', 'desc')
+        ->get();
+        $buyerList = [];
+        $list_attachment = [];
+        $pending_document =[];
+            foreach ($buyers as $buyer) {
+                $documents = BuyerController::getAttachment($buyer->reference_code);
+                // dd($documents);
+                if($documents['success']){
+                    // dd($documents['data']);
+                    $list_attachment[] = $documents['data']['list_attachment'];
+                    $pending_document =[];
+                //    dd(($list_attachment));
+                    if(count($list_attachment)){
+                        foreach($list_attachment[0] as $attachment)
+                        {
+                            if($attachment['exists']!==true){
+                                // dd($attachment);
+                                $pending_document[]=['code'=>$attachment['code'],'name'=>$attachment['name']];
+                            }
+                        //waiting for update sa document list 
+                        }
+
+                    }
+                
+                }
+                $buyerList[] = [$buyer,$documents['success']?$documents['data']:[],$pending_document];
+            
+    }
+      return Inertia::render('Buyer/Index', [
+            'buyers' => $buyerList,
+            'brokers' => User::where('meta->seller_commission_code',auth::user()->seller_commission_code)->get
+        ]);
+    }
+    public function lead(){
+        $buyerList = Contact::
+        where('created_at', '<=', now()->subDays(7))
+        ->whereNull('current_status')
+        ->get();
+        // dd($buyerList);
+        return Inertia::render('Buyer/Lead', [
+            'buyers' =>$buyerList,
+            'brokers' => User::all()
+        ]);
+    }
+    public function update(Request $request, Contact $user)
+    {
+        // dd($request->reference_code);
+        Contact::updateOrCreate(
+            ['reference_code' => $request->reference_code],
+            [ 'landline' => $request->seller_email.'/'.$request->seller_commission_code] // update status
+        );
+        // try {
+        //     $validated = $request->validate([
+        //         'reference_code' => 'required|string',
+        //         'first_name' => 'required|string',
+        //         'middle_name' => 'nullable|string',
+        //         'last_name' => 'required|string',
+        //         'landline' => 'nullable|string',
+        //         'email' => 'required|string|email|unique:contacts,email,' . $user->id,
+        //         'mobile' => 'required|string|unique:contacts,mobile,' . $user->id,
+        //     ]);
+        //     dd($validated);
+        // } catch (\Illuminate\Validation\ValidationException $e) {
+        //     dd($e->errors()); // dump validation errors
+        // }
+        // $user->update($data);
+        return redirect()->back()->with('success', 'User updated!');
     }
 }

@@ -11,6 +11,7 @@ use Homeful\Contacts\Models\Contact;
 use App\Traits\HasSellerAttributes;
 use Homeful\Common\Traits\HasMeta;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\UserRole;
 
 /**
  * Class User
@@ -37,11 +38,17 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'first_name',//added ggvivar
+        'middle_name',//added ggvivar
+        'last_name',//added ggvivar
+        'birthdate',
         'password',
-        'seller_id', //added ggvivar 05/22/2025
         'seller_commission_code',//added ggvivar 05/22/2025
         'contact',//added 06/13/2025
-        'seller_group'
+        'seller_code',
+        'user_role_id',//added ggvivar 
+        'change_password',//added ggvivar
+        'active'
     ];
 
     /**
@@ -80,4 +87,31 @@ class User extends Authenticatable
             ->withPivot( 'meta')
             ->withTimestamps();
     }
+    
+    public function role()
+    {
+        return $this->belongsTo(UserRole::class, 'user_role_id');
+    }
+    public function getPermissions(): array
+{
+    $permissions = [];
+    $role = $this->role;
+    if (!$role) return $permissions;
+    
+    $modules = $role->module(); 
+    foreach ($modules as $module) { 
+        if (empty($module->slug)) {
+            continue;
+        }
+        $permissions[$module->slug] = [
+            'view' => (bool) $module->view,
+            'add' => (bool) $module->add,
+            'edit' => (bool) $module->edit,
+            'delete' => (bool) $module->delete,
+            'import' => (bool) $module->import,
+            'export' => (bool) $module->export,
+        ];
+    }
+    return $permissions;
+}
 }

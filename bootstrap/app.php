@@ -16,9 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
-
-        //
+        //added ggvivar for permissions
+        $middleware->alias([
+            'check.permission' => \App\Http\Middleware\CheckModulePermissionMiddleware::class,
+        ]);
     })
+    
     ->withExceptions(function (Exceptions $exceptions) {
-        //
     })->create();

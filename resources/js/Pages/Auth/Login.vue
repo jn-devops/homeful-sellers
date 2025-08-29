@@ -10,10 +10,10 @@
       </div>
 
       <form @submit.prevent="submit" class="space-y-4">
-        <div v-if="$page.props.errors.message"
+        <div v-if="page.props.errors.email"
 show 
 class="alert alert-danger text-center float" role="alert">
-  {{ $page.props.errors.message }}
+  {{ page.props.errors.email }}
 </div>
         <div>
           <label for="email">Email Address</label>
@@ -61,6 +61,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
+const page = usePage();
 
 const showPassword = ref(false);
 const togglePassword = () => {

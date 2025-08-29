@@ -55,9 +55,7 @@ defineProps({
                         <div class="col-12 fw-bold">Phone Number:</div>
                         <div class="col-6">{{ form.contact }}</div>
                         <div class="col-6">
-                        <button class="btn-primary d-flex justify-content-end text-end rounded-pill bg-primary text-white px-2" @click="showPasswordModal = true">
-                            Change
-                        </button>
+                        
                     </div>
 
                     </div>
